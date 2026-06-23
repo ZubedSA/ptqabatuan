@@ -37,9 +37,9 @@ export default function RootLayout({
       lang="id"
       className={`${montserrat.variable} ${amiri.variable} ${notoKufi.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="min-h-full flex flex-col font-sans overflow-x-hidden">
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 w-full overflow-hidden">{children}</main>
         <Footer />
       </body>
     </html>
