@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { ArrowLeft, Calendar, User, BookOpen, Clock, Share2, Loader2 } from "lucide-react";
 
 export default function DetailArtikelPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -74,7 +75,7 @@ export default function DetailArtikelPage({ params }: { params: Promise<{ slug: 
         {article.thumbnail ? (
           <div className="absolute inset-0 z-0">
             <img 
-              src={article.thumbnail} 
+              src={getDirectImageUrl(article.thumbnail)} 
               alt={article.title}
               className="w-full h-full object-cover"
             />
@@ -211,7 +212,7 @@ export default function DetailArtikelPage({ params }: { params: Promise<{ slug: 
                   <div className="relative h-48 overflow-hidden">
                     {related.thumbnail ? (
                       <img 
-                        src={related.thumbnail} 
+                        src={getDirectImageUrl(related.thumbnail)} 
                         alt={related.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />

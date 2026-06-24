@@ -31,7 +31,7 @@ export default function DonasiPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen pt-24 pb-12 bg-white dark:bg-background">
+    <div className="flex flex-col min-h-screen pb-12 bg-white dark:bg-background">
       
       {/* Hero Section */}
       <section className="relative pt-20 pb-16 overflow-hidden bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-800">

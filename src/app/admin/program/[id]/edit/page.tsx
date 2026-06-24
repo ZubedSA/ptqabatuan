@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { ArrowLeft, Save, Loader2, Upload, Plus, Trash2, BookOpen, Languages, Sparkles, GraduationCap, Users, Monitor, Shield, Trophy } from "lucide-react";
 
 const AVAILABLE_ICONS = [
@@ -146,7 +147,7 @@ export default function EditProgramPage({ params }: { params: Promise<{ id: stri
               <label className="block text-sm font-medium text-gray-700">Foto Sampul Program</label>
               <div className="relative aspect-[4/3] border-2 border-dashed border-gray-300 rounded-xl overflow-hidden group hover:bg-gray-50 transition-colors cursor-pointer flex flex-col items-center justify-center bg-gray-50">
                 {imagePreview ? (
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                  <img src={getDirectImageUrl(imagePreview)} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
                   <div className="text-center p-4">
                     <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />

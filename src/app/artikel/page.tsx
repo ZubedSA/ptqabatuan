@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { Search, Calendar, User, ArrowRight, Loader2, BookOpen } from "lucide-react";
 
 export default function ArtikelPage() {
@@ -46,7 +47,7 @@ export default function ArtikelPage() {
   const regularArticles = filteredArticles.length > 1 ? filteredArticles.slice(1) : [];
 
   return (
-    <div className="flex flex-col min-h-screen pt-24 pb-12 bg-white dark:bg-background">
+    <div className="flex flex-col min-h-screen pb-12 bg-white dark:bg-background">
       {/* Header Section */}
       <section className="relative pt-24 pb-16 md:pt-32 md:pb-20 overflow-hidden bg-gray-50 dark:bg-gray-900/50">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#0a3822]/5 to-transparent" />
@@ -139,7 +140,7 @@ export default function ArtikelPage() {
                   <div className="lg:w-3/5 h-64 sm:h-80 lg:h-auto relative overflow-hidden">
                     {featuredArticle.thumbnail ? (
                       <img 
-                        src={featuredArticle.thumbnail} 
+                        src={getDirectImageUrl(featuredArticle.thumbnail)} 
                         alt={featuredArticle.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
@@ -194,7 +195,7 @@ export default function ArtikelPage() {
                       <Link href={`/artikel/${article.slug}`} className="relative h-48 overflow-hidden block">
                         {article.thumbnail ? (
                           <img 
-                            src={article.thumbnail} 
+                            src={getDirectImageUrl(article.thumbnail)} 
                             alt={article.title}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />

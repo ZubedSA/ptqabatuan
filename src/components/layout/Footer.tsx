@@ -90,11 +90,6 @@ export function Footer() {
                       Hubungi Kami
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/admin" className="text-sm leading-6 text-gray-300 hover:text-secondary">
-                      Portal Admin
-                    </Link>
-                  </li>
                 </ul>
               </div>
             </div>

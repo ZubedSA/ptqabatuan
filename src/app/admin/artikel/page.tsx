@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { Plus, Edit, Trash2, Loader2, ExternalLink } from "lucide-react";
 
 export default function AdminArtikelPage() {
@@ -85,7 +86,7 @@ export default function AdminArtikelPage() {
                     <td className="px-6 py-4">
                       {article.thumbnail ? (
                         <img 
-                          src={article.thumbnail} 
+                          src={getDirectImageUrl(article.thumbnail)} 
                           alt={article.title} 
                           className="w-16 h-12 object-cover rounded shadow-sm border border-gray-200"
                         />

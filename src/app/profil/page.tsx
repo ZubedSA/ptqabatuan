@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Target, CheckCircle2, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 
 export default function ProfilPage() {
   const [staffs, setStaffs] = useState<any[]>([]);
@@ -90,8 +91,8 @@ export default function ProfilPage() {
   });
 
   return (
-    <div className="flex flex-col min-h-screen pt-24 pb-12 bg-white dark:bg-background">
-      {/* Header Profil */}
+    <div className="flex flex-col min-h-screen pb-12 bg-white dark:bg-background">
+      {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#0a3822] via-primary to-[#051c11]">
           <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]" />
@@ -248,7 +249,7 @@ export default function ProfilPage() {
                   <div className="relative h-28 w-28 rounded-full overflow-hidden mb-5 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
                     {staff.photo ? (
                       <img
-                        src={staff.photo}
+                        src={getDirectImageUrl(staff.photo)}
                         alt={staff.name}
                         className="h-full w-full object-cover"
                       />

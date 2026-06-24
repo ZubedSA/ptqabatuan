@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { Loader2, X, Image as ImageIcon, ZoomIn } from "lucide-react";
 
 export default function GaleriPage() {
@@ -53,7 +54,7 @@ export default function GaleriPage() {
     : gallery.filter(item => item.category === selectedCategory);
 
   return (
-    <div className="flex flex-col min-h-screen pt-24 pb-12 bg-white dark:bg-background">
+    <div className="flex flex-col min-h-screen pb-12 bg-white dark:bg-background">
 
       {/* Header Section */}
       <section className="relative pt-24 pb-16 overflow-hidden bg-gray-50 dark:bg-gray-900/50">
@@ -132,7 +133,7 @@ export default function GaleriPage() {
                   {/* Image Container */}
                   <div className="aspect-[4/3] w-full relative overflow-hidden bg-gray-100 dark:bg-gray-900">
                     <img
-                      src={item.image_url}
+                      src={getDirectImageUrl(item.image_url)}
                       alt={item.title}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                       loading="lazy"
@@ -189,7 +190,7 @@ export default function GaleriPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={selectedImage.image_url}
+                src={getDirectImageUrl(selectedImage.image_url)}
                 alt={selectedImage.title}
                 className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
               />

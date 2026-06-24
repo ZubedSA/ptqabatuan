@@ -67,49 +67,6 @@ export function Navbar() {
           showSolid ? "translate-y-0" : "translate-y-0"
         )}
       >
-        {/* ── Top Info Bar (Desktop Only) ── */}
-        <div
-          className={cn(
-            "navbar-topbar bg-[#072718] text-white/90 text-xs border-b border-[#D4AF37]/10 transition-all duration-300 overflow-hidden",
-            scrolled ? "h-0 opacity-0 border-none" : "h-9 opacity-100"
-          )}
-        >
-          <div className="max-w-7xl mx-auto px-6 h-full items-center justify-between"
-            style={{ display: "flex" }}
-          >
-            <div className="flex items-center gap-6">
-              <a
-                href="tel:+6281234567890"
-                className="flex items-center gap-2 hover:text-[#D4AF37] transition-colors"
-              >
-                <svg className="h-3 w-3 text-[#D4AF37]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-                <span>+62 812-3456-7890</span>
-              </a>
-              <a
-                href="mailto:info@alusymunibatuan.com"
-                className="flex items-center gap-2 hover:text-[#D4AF37] transition-colors"
-              >
-                <svg className="h-3 w-3 text-[#D4AF37]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-                <span>info@alusymunibatuan.com</span>
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
-                <span className="font-medium text-[#D4AF37]">PPDB Online 2026/2027 Dibuka</span>
-              </div>
-              <span className="text-white/20">|</span>
-              <Link href="/ppdb" className="hover:text-[#D4AF37] font-semibold transition-colors">
-                Daftar Sekarang
-              </Link>
-            </div>
-          </div>
-        </div>
 
         {/* ── Main Navigation Bar ── */}
         <div

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { Plus, Trash2, Loader2, Image as ImageIcon } from "lucide-react";
 
 export default function AdminGaleriPage() {
@@ -86,7 +87,7 @@ export default function AdminGaleriPage() {
               <div key={item.id} className="group relative bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col">
                 <div className="aspect-square w-full relative overflow-hidden bg-gray-100">
                   <img 
-                    src={item.image_url} 
+                    src={getDirectImageUrl(item.image_url)} 
                     alt={item.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { Plus, Edit, Trash2, Loader2, X, Upload } from "lucide-react";
 
 export default function AdminStaffPage() {
@@ -183,7 +184,7 @@ export default function AdminStaffPage() {
                     <td className="px-6 py-4">
                       {staff.photo ? (
                         <img
-                          src={staff.photo}
+                          src={getDirectImageUrl(staff.photo)}
                           alt={staff.name}
                           className="h-10 w-10 rounded-full object-cover border border-gray-200"
                         />
@@ -295,7 +296,7 @@ export default function AdminStaffPage() {
                   {photoUrl && (
                     <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg border border-gray-100">
                       <img
-                        src={photoUrl}
+                        src={getDirectImageUrl(photoUrl)}
                         alt="Preview"
                         className="h-12 w-12 rounded-full object-cover border border-gray-200"
                       />

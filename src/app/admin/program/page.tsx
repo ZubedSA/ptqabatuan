@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { Plus, Edit, Trash2, Loader2, BookOpen, Languages, Sparkles, GraduationCap, Users, Monitor, Shield, Trophy } from "lucide-react";
 
 // Helper to render the correct icon based on the saved string
@@ -91,7 +92,7 @@ export default function AdminProgramPage() {
             <div key={prog.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
               <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
                 {prog.image_url ? (
-                  <img src={prog.image_url} alt={prog.title} className="w-full h-full object-cover" />
+                  <img src={getDirectImageUrl(prog.image_url)} alt={prog.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">Tanpa Foto</div>
                 )}

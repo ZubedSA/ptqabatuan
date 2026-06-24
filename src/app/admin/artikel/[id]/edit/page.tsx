@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { ArrowLeft, Save, Loader2, Upload } from "lucide-react";
 
 export default function EditArtikelPage({ params }: { params: Promise<{ id: string }> }) {
@@ -235,7 +236,7 @@ export default function EditArtikelPage({ params }: { params: Promise<{ id: stri
               </div>
               {formData.thumbnail && (
                 <div className="h-24 w-32 shrink-0 rounded-lg overflow-hidden border border-gray-200 shadow-sm relative group">
-                  <img src={formData.thumbnail} alt="Preview" className="w-full h-full object-cover" />
+                  <img src={getDirectImageUrl(formData.thumbnail)} alt="Preview" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button type="button" onClick={() => setFormData({ ...formData, thumbnail: "" })} className="text-white text-xs font-medium hover:underline">Hapus</button>
                   </div>

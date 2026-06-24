@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, UploadCloud, CheckCircle, ArrowRight } from "lucide-react";
+import { FileText, PenTool, CheckCircle, UserCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function PPDBPage() {
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-white dark:bg-background">
+    <div className="min-h-screen pb-12 bg-white dark:bg-background">
       {/* Header */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#0a3822] via-primary to-[#051c11]">
@@ -40,22 +40,27 @@ export default function PPDBPage() {
           <p className="text-gray-600 dark:text-gray-400 mt-4">Langkah-langkah pendaftaran santri baru secara online.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 relative">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
           {[
             {
               icon: <FileText className="w-8 h-8 text-primary" />,
-              title: "1. Isi Formulir",
-              desc: "Mengisi data diri calon santri dan orang tua/wali dengan lengkap dan benar pada formulir online."
+              title: "1. Pendaftaran Awal",
+              desc: "Mengisi formulir pendaftaran secara online dan melengkapi unggahan berkas persyaratan."
             },
             {
-              icon: <UploadCloud className="w-8 h-8 text-secondary" />,
-              title: "2. Upload Berkas",
-              desc: "Mengunggah dokumen persyaratan seperti KK, Akte Kelahiran, Ijazah, dan Pas Foto."
+              icon: <PenTool className="w-8 h-8 text-secondary" />,
+              title: "2. Tes Masuk & Ujian",
+              desc: "Calon santri wajib mengikuti tes masuk dan melakukan karantina di pondok selama dua hari."
             },
             {
               icon: <CheckCircle className="w-8 h-8 text-green-500" />,
-              title: "3. Verifikasi & Pengumuman",
-              desc: "Tunggu proses verifikasi oleh panitia. Hasil seleksi akan diumumkan melalui WhatsApp dan website."
+              title: "3. Pengumuman Hasil",
+              desc: "Hasil seleksi tes masuk akan diinformasikan melalui WhatsApp dan dapat dicek pada website kami."
+            },
+            {
+              icon: <UserCheck className="w-8 h-8 text-blue-500" />,
+              title: "4. Pendaftaran Ulang",
+              desc: "Bagi calon santri yang dinyatakan lulus, wajib melakukan daftar ulang dan melengkapi pembiayaan awal."
             }
           ].map((step, idx) => (
             <motion.div 
@@ -83,10 +88,10 @@ export default function PPDBPage() {
             Mulai Pendaftaran Online
             <ArrowRight className="w-5 h-5" />
           </Link>
-          <div className="mt-6 flex justify-center gap-4">
+          <div className="mt-6 flex flex-wrap justify-center items-center gap-4">
             <Link href="/ppdb/status" className="text-primary hover:underline font-medium">Cek Status Pendaftaran</Link>
-            <span className="text-gray-300">|</span>
-            <a href="/panduan-ppdb.pdf" className="text-gray-600 hover:underline dark:text-gray-400 font-medium">Unduh Brosur & Persyaratan</a>
+            <span className="text-gray-300 hidden sm:inline">|</span>
+            <Link href="/ppdb/panduan" className="text-gray-600 hover:underline dark:text-gray-400 font-medium">Buku Panduan & Persyaratan</Link>
           </div>
         </div>
       </section>

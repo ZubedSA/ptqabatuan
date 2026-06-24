@@ -126,9 +126,12 @@ CREATE POLICY "Donations viewable by everyone" ON public.donations FOR SELECT US
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Settings viewable by everyone" ON public.settings FOR SELECT USING (true);
 
--- PPDB Policy: Anyone can insert, but only admin can view/update
+-- PPDB Policy: Anyone can insert, admin can update/delete, public can view (for status checking)
 ALTER TABLE public.ppdb ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can submit PPDB" ON public.ppdb FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public can view PPDB status" ON public.ppdb FOR SELECT USING (true);
+CREATE POLICY "Admin can update PPDB" ON public.ppdb FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Admin can delete PPDB" ON public.ppdb FOR DELETE TO authenticated USING (true);
 
 -- Contact Policy: Anyone can insert
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;

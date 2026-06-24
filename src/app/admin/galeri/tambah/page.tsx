@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 import { ArrowLeft, Save, Loader2, Upload, ImageIcon } from "lucide-react";
 
 export default function TambahGaleriPage() {
@@ -100,32 +101,39 @@ export default function TambahGaleriPage() {
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sm:p-8 space-y-6">
         
         {/* Upload Area */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Foto</label>
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors relative overflow-hidden group">
-            {formData.image_url ? (
-              <>
-                <img src={formData.image_url} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Foto</label>
+            
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Masukkan URL Foto (Google Drive) atau unggah file..."
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a3822] focus:border-[#0a3822] outline-none transition-all"
+              />
+              <label className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 cursor-pointer transition-colors text-gray-700 gap-2 shrink-0">
+                <Upload className="w-4 h-4" />
+                <span>{uploading ? "Mengunggah..." : "Unggah File"}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            {formData.image_url && (
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-2 flex flex-col items-center justify-center bg-gray-50 relative overflow-hidden group h-64 mt-4">
+                <img src={getDirectImageUrl(formData.image_url)} alt="Preview" className="w-full h-full object-contain" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                  <span className="text-white text-sm font-medium">Klik untuk mengubah foto</span>
+                  <button type="button" onClick={() => setFormData({ ...formData, image_url: "" })} className="text-white text-sm font-medium hover:underline cursor-pointer">Hapus Foto</button>
                 </div>
-              </>
-            ) : (
-              <>
-                <ImageIcon className="w-12 h-12 text-gray-400 mb-3" />
-                <p className="text-sm text-gray-600 font-medium mb-1">
-                  {uploading ? "Mengunggah..." : "Klik untuk memilih file foto"}
-                </p>
-                <p className="text-xs text-gray-400">PNG, JPG, WEBP hingga 5MB</p>
-              </>
+              </div>
             )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoUpload}
-              disabled={uploading}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-            />
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Languages, Sparkles, GraduationCap, Users, Monitor, Shield, Trophy, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 
 // Helper to render the correct icon based on the saved string
 const renderIcon = (iconName: string, className: string = "w-8 h-8") => {
@@ -40,8 +41,8 @@ export default function ProgramPage() {
   }, []);
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-background">
-      {/* Header */}
+    <div className="min-h-screen pb-12 bg-gray-50 dark:bg-background">
+      {/* Header Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#0a3822] via-primary to-[#051c11]">
           <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]" />
@@ -99,7 +100,7 @@ export default function ProgramPage() {
                 <div className="w-full lg:w-[45%]">
                   <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl bg-gray-200 dark:bg-gray-800 transform group-hover:scale-[1.02] transition-transform duration-700">
                     {prog.image_url ? (
-                      <img src={prog.image_url} alt={prog.title} className="w-full h-full object-cover" />
+                      <img src={getDirectImageUrl(prog.image_url)} alt={prog.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
                         <BookOpen className="w-16 h-16 mb-2 opacity-50" />
