@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, Target, CheckCircle2, MapPin } from "lucide-react";
+import { BookOpen, Target, CheckCircle2, MapPin, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getDirectImageUrl } from "@/lib/utils";
 
@@ -66,13 +67,28 @@ export default function ProfilPage() {
     return acc;
   }, {});
 
-  // Get active roles that have staff assigned
-  const activeRolesList = roles.filter(role => groupedStaffs[role.name] && groupedStaffs[role.name].length > 0);
-
   // Get positions that are not in staff_roles but have staff
   const otherPositions = Object.keys(groupedStaffs).filter(
     pos => !roles.some(role => role.name === pos) && groupedStaffs[pos].length > 0
   );
+
+  // Group all roles into row groups based on priority numbers (same priority = parallel)
+  const getRowGroups = (allRoles: any[]) => {
+    const groupsMap: { [key: number]: any[] } = {};
+    for (const role of allRoles) {
+      const priority = role.priority || 0;
+      if (!groupsMap[priority]) {
+        groupsMap[priority] = [];
+      }
+      groupsMap[priority].push(role);
+    }
+    const sortedKeys = Object.keys(groupsMap)
+      .map(Number)
+      .sort((a, b) => a - b);
+    return sortedKeys.map(key => groupsMap[key]);
+  };
+
+  const rowGroups = getRowGroups(roles);
 
   // Filter huffazh list based on search query
   const filteredHuffazh = huffazh.filter((santri) =>
@@ -263,96 +279,135 @@ export default function ProfilPage() {
               Belum ada data pengurus yang dimasukkan.
             </div>
           ) : (
-            <div className="space-y-16">
-              {/* Render active sorted roles */}
-              {activeRolesList.map((role) => (
-                <div key={role.id} className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <h3 className="text-lg font-bold text-[#0B3B24] dark:text-white font-serif bg-[#D4AF37]/10 dark:bg-secondary/20 px-5 py-2 rounded-full border border-[#D4AF37]/20 shadow-sm shrink-0">
-                      {role.name}
-                    </h3>
-                    <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
-                  </div>
-                  
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                    {groupedStaffs[role.name].map((staff, idx) => (
-                      <motion.div
-                        key={staff.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: idx * 0.05 }}
-                        className="group flex flex-col items-center text-center p-6 rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-secondary/30 transition-all"
-                      >
-                        <div className="relative h-28 w-28 rounded-full overflow-hidden mb-5 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
-                          {staff.photo ? (
-                            <img
-                              src={getDirectImageUrl(staff.photo)}
-                              alt={staff.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="h-full w-full bg-primary/10 text-primary font-bold flex items-center justify-center text-3xl">
-                              {staff.name.charAt(0).toUpperCase()}
-                            </div>
-                          )}
-                        </div>
-                        <h4 className="font-bold text-lg text-gray-900 dark:text-white leading-tight">
-                          {staff.name}
-                        </h4>
-                        <p className="text-xs sm:text-sm text-secondary font-medium tracking-wide uppercase mt-2">
-                          {staff.position}
-                        </p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-12">
+              {/* Only render active row groups, sliced to top 3 for main page */}
+              {rowGroups
+                .filter(group => group.some(role => groupedStaffs[role.name] && groupedStaffs[role.name].length > 0))
+                .slice(0, 3)
+                .map((group, gIdx) => {
+                  if (group.length === 1) {
+                    const role = group[0];
+                    const memberCount = groupedStaffs[role.name]?.length || 0;
+                    const gridClass = memberCount >= 2
+                      ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8"
+                      : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8";
 
-              {/* Render other roles not defined in roles table */}
-              {otherPositions.map((posName) => (
-                <div key={posName} className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <h3 className="text-lg font-bold text-[#0B3B24] dark:text-white font-serif bg-gray-100 dark:bg-secondary/20 px-5 py-2 rounded-full border border-gray-200 shadow-sm shrink-0">
-                      {posName}
-                    </h3>
-                    <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
-                  </div>
-                  
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                    {groupedStaffs[posName].map((staff, idx) => (
-                      <motion.div
-                        key={staff.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: idx * 0.05 }}
-                        className="group flex flex-col items-center text-center p-6 rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-secondary/30 transition-all"
-                      >
-                        <div className="relative h-28 w-28 rounded-full overflow-hidden mb-5 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
-                          {staff.photo ? (
-                            <img
-                              src={getDirectImageUrl(staff.photo)}
-                              alt={staff.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="h-full w-full bg-primary/10 text-primary font-bold flex items-center justify-center text-3xl">
-                              {staff.name.charAt(0).toUpperCase()}
-                            </div>
-                          )}
+                    return (
+                      <div key={role.id} className="space-y-6">
+                        <div className="flex items-center gap-4">
+                          <h3 className="text-lg font-bold text-[#0B3B24] dark:text-white font-serif bg-[#D4AF37]/10 dark:bg-secondary/20 px-5 py-2 rounded-full border border-[#D4AF37]/20 shadow-sm shrink-0">
+                            {role.name}
+                          </h3>
+                          <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
                         </div>
-                        <h4 className="font-bold text-lg text-gray-900 dark:text-white leading-tight">
-                          {staff.name}
-                        </h4>
-                        <p className="text-xs sm:text-sm text-secondary font-medium tracking-wide uppercase mt-2">
-                          {staff.position}
-                        </p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                        
+                        <div className={gridClass}>
+                          {groupedStaffs[role.name].map((staff, idx) => (
+                            <motion.div
+                              key={staff.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 0.5, delay: idx * 0.05 }}
+                              className="group flex flex-col items-center text-center p-4 sm:p-6 rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-secondary/30 transition-all"
+                            >
+                              <div className="relative h-20 w-20 sm:h-28 sm:w-28 rounded-full overflow-hidden mb-4 sm:mb-5 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
+                                {staff.photo ? (
+                                  <img
+                                    src={getDirectImageUrl(staff.photo)}
+                                    alt={staff.name}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="h-full w-full bg-primary/10 text-primary font-bold flex items-center justify-center text-xl sm:text-3xl">
+                                    {staff.name.charAt(0).toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+                              <h4 className="font-bold text-sm sm:text-lg text-gray-900 dark:text-white leading-tight px-1">
+                                {staff.name}
+                              </h4>
+                              <p className="text-[10px] sm:text-xs text-secondary font-medium tracking-wide uppercase mt-1 sm:mt-2">
+                                {staff.position}
+                              </p>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    // Parallel roles rendered side-by-side
+                    return (
+                      <div key={`group-${gIdx}`} className={`grid grid-cols-1 md:grid-cols-${group.length} gap-8 items-start`}>
+                        {group.map((role) => {
+                          const staffInRole = groupedStaffs[role.name] || [];
+                          if (staffInRole.length === 0) {
+                            return <div key={role.id} />; // Empty column to keep alignment
+                          }
+                          const memberCount = staffInRole.length;
+                          const gridClass = memberCount >= 2
+                            ? "grid grid-cols-2 md:grid-cols-1 gap-4"
+                            : "grid grid-cols-1 gap-4";
+
+                          return (
+                            <div key={role.id} className="space-y-6">
+                              <div className="flex items-center gap-4">
+                                <h3 className="text-lg font-bold text-[#0B3B24] dark:text-white font-serif bg-[#D4AF37]/10 dark:bg-secondary/20 px-5 py-2 rounded-full border border-[#D4AF37]/20 shadow-sm shrink-0">
+                                  {role.name}
+                                </h3>
+                                <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
+                              </div>
+                              
+                              <div className={gridClass}>
+                                {staffInRole.map((staff, idx) => (
+                                  <motion.div
+                                    key={staff.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: idx * 0.05 }}
+                                    className="group flex flex-col items-center text-center p-4 sm:p-5 rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-secondary/30 transition-all"
+                                  >
+                                    <div className="relative h-16 w-16 sm:h-24 sm:w-24 rounded-full overflow-hidden mb-3 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
+                                      {staff.photo ? (
+                                        <img
+                                          src={getDirectImageUrl(staff.photo)}
+                                          alt={staff.name}
+                                          className="h-full w-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="h-full w-full bg-primary/10 text-primary font-bold flex items-center justify-center text-lg sm:text-2xl">
+                                          {staff.name.charAt(0).toUpperCase()}
+                                        </div>
+                                      )}
+                                    </div>
+                                    <h4 className="font-bold text-xs sm:text-base text-gray-900 dark:text-white leading-tight px-1">
+                                      {staff.name}
+                                    </h4>
+                                    <p className="text-[9px] sm:text-xs text-secondary font-medium tracking-wide uppercase mt-1">
+                                      {staff.position}
+                                    </p>
+                                  </motion.div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  }
+                })}
+
+              {/* Lihat Selengkapnya button */}
+              <div className="text-center mt-12">
+                <Link
+                  href="/profil/pengurus"
+                  className="inline-flex items-center gap-2 bg-[#0a3822] hover:bg-[#0a3822]/90 text-white px-8 py-3 rounded-full font-semibold shadow hover:shadow-md transition-all cursor-pointer"
+                >
+                  <span>Lihat Selengkapnya</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
             </div>
           )}
         </div>

@@ -17,6 +17,8 @@ export default function AdminStaffPage() {
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
+  
+  const [savingRoles, setSavingRoles] = useState(false);
 
   // Form states
   const [name, setName] = useState("");
@@ -66,29 +68,34 @@ export default function AdminStaffPage() {
     setRoles(roles.map(r => r.id === id ? { ...r, name: newName } : r));
   };
 
-  const handleSaveRoleName = async (id: string, name: string) => {
-    if (!name.trim()) return;
-    await supabase.from("staff_roles").update({ name: name.trim() }).eq("id", id);
-    fetchRoles();
+  const handleUpdateRolePriority = (id: string, newPriority: number) => {
+    setRoles(roles.map(r => r.id === id ? { ...r, priority: newPriority } : r));
   };
 
-  const handleMoveRole = async (index: number, direction: 'up' | 'down') => {
-    const newRoles = [...roles];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    
-    if (targetIndex < 0 || targetIndex >= newRoles.length) return;
-    
-    const currentRole = newRoles[index];
-    const targetRole = newRoles[targetIndex];
-    
-    const tempPriority = currentRole.priority;
-    currentRole.priority = targetRole.priority;
-    targetRole.priority = tempPriority;
-    
-    await supabase.from("staff_roles").update({ priority: currentRole.priority }).eq("id", currentRole.id);
-    await supabase.from("staff_roles").update({ priority: targetRole.priority }).eq("id", targetRole.id);
-    
-    fetchRoles();
+  const handleSaveAllRoles = async () => {
+    setSavingRoles(true);
+    try {
+      const promises = roles.map((role) => 
+        supabase
+          .from("staff_roles")
+          .update({ 
+            priority: role.priority || 0,
+            name: role.name
+          })
+          .eq("id", role.id)
+      );
+      const results = await Promise.all(promises);
+      const failed = results.find(r => r.error);
+      if (failed) {
+        throw new Error(failed.error.message);
+      }
+      setRoleModalOpen(false);
+      fetchStaffs();
+    } catch (err: any) {
+      alert("Gagal menyimpan perubahan struktur: " + err.message);
+    } finally {
+      setSavingRoles(false);
+    }
   };
 
   const handleDeleteRole = async (id: string, roleName: string) => {
@@ -508,47 +515,46 @@ export default function AdminStaffPage() {
                 ) : roles.length === 0 ? (
                   <p className="text-sm text-gray-400 italic text-center py-4">Belum ada peran. Buat terlebih dahulu.</p>
                 ) : (
-                  roles.map((role, idx) => (
-                    <div key={role.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100 gap-4">
-                      <div className="flex-1">
+                  roles.map((role, idx) => {
+                    return (
+                      <div
+                        key={role.id}
+                        className="flex items-center justify-between p-3 bg-[#fbfbfb] dark:bg-gray-800 rounded-xl border border-gray-200 hover:border-gray-300 gap-3"
+                      >
+                        {/* Priority / Level Number Input */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-xs text-gray-500 font-medium">No.</span>
+                          <input
+                            type="number"
+                            value={role.priority || 0}
+                            onChange={(e) => handleUpdateRolePriority(role.id, parseInt(e.target.value) || 0)}
+                            className="w-14 px-2 py-1 text-center border border-gray-200 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0a3822]/20 focus:border-[#0a3822] bg-white text-gray-900"
+                            min="1"
+                            title="Nomer tingkat urutan (Nomer yang sama akan sejajar)"
+                          />
+                        </div>
+
+                        {/* Name Input */}
                         <input
                           type="text"
                           value={role.name}
                           onChange={(e) => handleUpdateRoleName(role.id, e.target.value)}
-                          onBlur={(e) => handleSaveRoleName(role.id, e.target.value)}
-                          className="w-full bg-transparent font-medium text-gray-900 text-sm focus:bg-white focus:px-2 focus:py-1 rounded border border-transparent focus:border-gray-200 outline-none"
+                          className="flex-1 px-3 py-1 border border-gray-200 hover:border-gray-300 focus:border-[#0a3822] focus:ring-2 focus:ring-[#0a3822]/20 focus:bg-white bg-transparent rounded-lg text-sm font-medium text-gray-900 dark:text-white outline-none transition-all"
+                          placeholder="Nama Jabatan (contoh: Sekretaris)"
                         />
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => handleMoveRole(idx, 'up')}
-                          className="p-1.5 bg-white text-gray-600 hover:text-[#0a3822] border border-gray-200 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                          title="Naikkan Urutan"
-                        >
-                          <ArrowUp className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === roles.length - 1}
-                          onClick={() => handleMoveRole(idx, 'down')}
-                          className="p-1.5 bg-white text-gray-600 hover:text-[#0a3822] border border-gray-200 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                          title="Turunkan Urutan"
-                        >
-                          <ArrowDown className="w-4 h-4" />
-                        </button>
+
+                        {/* Actions: Delete */}
                         <button
                           type="button"
                           onClick={() => handleDeleteRole(role.id, role.name)}
-                          className="p-1.5 bg-white text-red-500 hover:bg-red-50 border border-gray-200 rounded-lg cursor-pointer"
+                          className="p-1.5 bg-white hover:bg-red-50 text-red-500 border border-gray-200 rounded-lg cursor-pointer shrink-0 transition-colors"
                           title="Hapus Peran"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -556,10 +562,26 @@ export default function AdminStaffPage() {
             {/* Footer */}
             <div className="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
               <button
+                type="button"
                 onClick={() => setRoleModalOpen(false)}
                 className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 cursor-pointer"
               >
-                Tutup
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={savingRoles}
+                onClick={handleSaveAllRoles}
+                className="px-4 py-2 bg-[#0a3822] text-white rounded-lg text-sm font-semibold hover:bg-[#0a3822]/90 cursor-pointer flex items-center gap-2"
+              >
+                {savingRoles ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Menyimpan...</span>
+                  </>
+                ) : (
+                  <span>Simpan Perubahan</span>
+                )}
               </button>
             </div>
           </div>
