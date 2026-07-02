@@ -86,7 +86,7 @@ export default function AdminStaffPage() {
       );
       const results = await Promise.all(promises);
       const failed = results.find(r => r.error);
-      if (failed) {
+      if (failed && failed.error) {
         throw new Error(failed.error.message);
       }
       setRoleModalOpen(false);
