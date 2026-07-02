@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { BookOpen, Target, CheckCircle2, MapPin, ArrowRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BookOpen, Target, CheckCircle2, MapPin, ArrowRight, Award, ChevronDown, ChevronUp, Calendar, History } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getDirectImageUrl } from "@/lib/utils";
@@ -12,6 +12,19 @@ export default function ProfilPage() {
   const [roles, setRoles] = useState<any[]>([]);
   const [huffazh, setHuffazh] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<"huffazh" | "khotimin">("huffazh");
+  const [showFullHistory, setShowFullHistory] = useState(false);
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  const toggleHistory = () => {
+    const nextState = !showFullHistory;
+    setShowFullHistory(nextState);
+    if (nextState) {
+      setTimeout(() => {
+        timelineRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    }
+  };
 
   const [loadingStaffs, setLoadingStaffs] = useState(true);
   const [loadingHuffazh, setLoadingHuffazh] = useState(true);
@@ -90,8 +103,17 @@ export default function ProfilPage() {
 
   const rowGroups = getRowGroups(roles);
 
+  // Filter by active tab (Huffazh vs Khotimin)
+  const tabFilteredHuffazh = huffazh.filter(santri => {
+    if (activeTab === "huffazh") {
+      return santri.has_syahadah !== false;
+    } else {
+      return santri.has_syahadah === false;
+    }
+  });
+
   // Filter huffazh list based on search query
-  const filteredHuffazh = huffazh.filter((santri) =>
+  const filteredHuffazh = tabFilteredHuffazh.filter((santri) =>
     santri.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -175,13 +197,25 @@ export default function ProfilPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/20 text-secondary font-semibold text-sm">
                 Sejarah Singkat
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Jejak Langkah Al-Usymuni</h2>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-serif">Jejak Langkah Al-Usymuni</h2>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan didirikan pada tahun 2000 dengan niat luhur mencetak generasi yang hafal Al-Qur'an dan memahami ilmu-ilmu keislaman secara komprehensif.
+                Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan didirikan dengan niat luhur mencetak generasi penghafal Al-Qur'an yang taqwallah, berakhlaqul karimah, berilmu amaliah, dan beramal ilmiyyah.
               </p>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                Berawal dari sebuah majelis taklim kecil, kini Al-Usymuni telah berkembang menjadi lembaga pendidikan modern yang mengintegrasikan kurikulum salaf dan pendidikan formal, tanpa meninggalkan tradisi khas pesantren.
+                Kisah pendirian pondok ini dipenuhi dengan doa ikhlas para masyayikh, amanah bimbingan yang tulus, serta restu keluarga besar yang hingga kini terus berkiprah melayani umat.
               </p>
+              
+              <button
+                onClick={toggleHistory}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0a3822] hover:bg-[#0a3822]/90 text-white rounded-full text-sm font-semibold shadow hover:shadow-md transition-all cursor-pointer group"
+              >
+                <span>{showFullHistory ? "Tampilkan Lebih Sedikit" : "Lihat Selengkapnya"}</span>
+                {showFullHistory ? (
+                  <ChevronUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
+                )}
+              </button>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -198,6 +232,179 @@ export default function ProfilPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </motion.div>
           </div>
+
+          {/* Expanded Detailed Timeline */}
+          <AnimatePresence>
+            {showFullHistory && (
+              <motion.div
+                ref={timelineRef}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="mt-16 border-t border-gray-100 dark:border-gray-800 pt-16 overflow-hidden scroll-mt-24"
+              >
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                  <h3 className="text-2xl font-bold text-[#0a3822] dark:text-white font-serif">
+                    Linimasa Cikal Bakal Pendirian
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 font-light">
+                    Kisah perjalanan doa Kyai, amanah bimbingan, hingga terwujudnya Pondok Tahfizh di Batuan.
+                  </p>
+                </div>
+
+                {/* Timeline Container */}
+                <div className="relative max-w-4xl mx-auto pl-6 sm:pl-0">
+                  {/* Center line (Desktop only) */}
+                  <div className="hidden sm:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#D4AF37] via-[#0a3822] to-[#D4AF37]/20" />
+                  {/* Left line (Mobile only) */}
+                  <div className="sm:hidden absolute left-3 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#D4AF37] via-[#0a3822] to-[#D4AF37]/20" />
+
+                  {/* Timeline Item 1: Doa Sang Kyai */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="relative flex flex-col sm:flex-row items-stretch mb-12 sm:mb-16"
+                  >
+                    {/* Circle Node Indicator */}
+                    <div className="absolute left-0 sm:left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white dark:bg-gray-900 border-4 border-[#D4AF37] flex items-center justify-center z-10">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#0a3822]" />
+                    </div>
+
+                    {/* Left Block (Desktop only) */}
+                    <div className="hidden sm:flex items-center justify-end w-1/2 pr-12 text-right">
+                      <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/35 text-[#0a3822] dark:text-[#D4AF37] text-xs font-bold font-mono">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Tahun 2004
+                      </div>
+                    </div>
+
+                    {/* Right Block (Content Card) */}
+                    <div className="w-full sm:w-1/2 pl-8 sm:pl-12">
+                      <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="sm:hidden inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/35 text-[#0a3822] dark:text-[#D4AF37] text-xs font-bold font-mono mb-3">
+                          <Calendar className="w-3.5 h-3.5" />
+                          Tahun 2004
+                        </div>
+                        <h4 className="text-base sm:text-lg font-bold text-[#0a3822] dark:text-[#D4AF37] font-serif mb-1">
+                          Cikal Bakal: Doa Sang Kyai
+                        </h4>
+                        <p className="text-[10px] text-[#D4AF37] font-semibold tracking-wider uppercase mb-3">
+                          Doa & Harapan di Atas Tanah Batuan
+                        </p>
+                        <div className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed space-y-2">
+                          <p>
+                            Berawal dari sebuah doa yang terucap oleh Pendiri dan Pengasuh Pondok Pesantren Al-Usymuni Tarate, <strong>Drs. KH. Abdullah Cholil, M.Hum</strong> saat ditanya oleh masyarakat pada saat membeli sebidang tanah di Desa Batuan pada tahun 2004.
+                          </p>
+                          <p>
+                            Beliau menjawab sambil berdoa dengan penuh keikhlasan: 
+                          </p>
+                          <span className="block font-serif italic text-[#0a3822] dark:text-[#D4AF37] bg-gray-50 dark:bg-gray-950 p-3 rounded-xl mt-3 text-center border border-gray-100 dark:border-gray-800">
+                            "Mik pola deggik bede nak poto kaule majege pondok e kakdinto"<br/>
+                            <span className="text-[10px] font-sans text-gray-500 block mt-1">(Barangkali suatu saat nanti ada keturunan saya yang bangun pondok disini)</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Timeline Item 2: Amanah Mertua */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="relative flex flex-col sm:flex-row-reverse items-stretch mb-12 sm:mb-16"
+                  >
+                    {/* Circle Node Indicator */}
+                    <div className="absolute left-0 sm:left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white dark:bg-gray-900 border-4 border-[#0a3822] dark:border-[#D4AF37] flex items-center justify-center z-10">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+                    </div>
+
+                    {/* Left Block (Desktop only) */}
+                    <div className="hidden sm:flex items-center justify-start w-1/2 pl-12 text-left">
+                      <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0a3822]/10 border border-[#0a3822]/35 text-[#0a3822] dark:text-emerald-400 text-xs font-bold font-mono">
+                        <History className="w-3.5 h-3.5" />
+                        Bimbingan Awal
+                      </div>
+                    </div>
+
+                    {/* Right Block (Content Card) */}
+                    <div className="w-full sm:w-1/2 pr-0 sm:pr-12 pl-8 sm:pl-0">
+                      <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="sm:hidden inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0a3822]/10 border border-[#0a3822]/35 text-[#0a3822] dark:text-emerald-400 text-xs font-bold font-mono mb-3">
+                          <History className="w-3.5 h-3.5" />
+                          Bimbingan Awal
+                        </div>
+                        <h4 className="text-base sm:text-lg font-bold text-[#0a3822] dark:text-[#D4AF37] font-serif mb-1">
+                          Amanah Mertua
+                        </h4>
+                        <p className="text-[10px] text-[#D4AF37] font-semibold tracking-wider uppercase mb-3">
+                          Bimbingan Hafalan Pertama di Congkop
+                        </p>
+                        <div className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed space-y-2">
+                          <p>
+                            <strong>Lora Miftahul Arifin</strong> merupakan suami Ning Hielma Hasanah (putri bungsu Drs. KH. Abdullah Cholil, M.Hum). Pengalaman Lora Miftah dalam bidang Al-Quran membuat Sang Mertua meminta beliau untuk mencari dan memilih santri Tarate yang berminat menghafalkan Al-Quran untuk diajari dan dibimbing.
+                          </p>
+                          <p>
+                            Atas perintah itu, Lora Miftah mengumpulkan para santri yang memiliki keinginan untuk menghafal Al-Quran dan kemudian membimbing mereka setiap ba'da subuh dan maghrib di <strong>congkop (gazebo) dhelem barat</strong>.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Timeline Item 3: Doa yang Terwujud */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="relative flex flex-col sm:flex-row items-stretch"
+                  >
+                    {/* Circle Node Indicator */}
+                    <div className="absolute left-0 sm:left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white dark:bg-gray-900 border-4 border-[#D4AF37] flex items-center justify-center z-10">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#0a3822]" />
+                    </div>
+
+                    {/* Left Block (Desktop only) */}
+                    <div className="hidden sm:flex items-center justify-end w-1/2 pr-12 text-right">
+                      <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-xs font-bold font-mono">
+                        <Calendar className="w-3.5 h-3.5" />
+                        19 Oktober 2021
+                      </div>
+                    </div>
+
+                    {/* Right Block (Content Card) */}
+                    <div className="w-full sm:w-1/2 pl-8 sm:pl-12">
+                      <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="sm:hidden inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-xs font-bold font-mono mb-3">
+                          <Calendar className="w-3.5 h-3.5" />
+                          19 Oktober 2021
+                        </div>
+                        <h4 className="text-base sm:text-lg font-bold text-[#0a3822] dark:text-[#D4AF37] font-serif mb-1">
+                          Doa yang Terwujud
+                        </h4>
+                        <p className="text-[10px] text-[#D4AF37] font-semibold tracking-wider uppercase mb-3">
+                          Perpindahan Resmi Kegiatan Tahfizh ke Batuan
+                        </p>
+                        <div className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed space-y-2">
+                          <p>
+                            Pada pertengahan tahun 1443 H pada Maulid Agung (12 Rabiul Awal) bertepatan dengan tanggal <strong>19 Oktober 2021 M</strong> (Hari Rabu), Kyai Abdullah menyuruh Lora Miftah dan santri yang ngaji ke beliau untuk pindah ke Batuan dan memulai kegiatan Al-Quran di dhelem yang sudah disiapkan setahun sebelumnya agar fokus pada kegiatan tahfizh.
+                          </p>
+                          <p className="border-t border-gray-100 dark:border-gray-800 pt-3 font-medium text-gray-700 dark:text-gray-200">
+                            Dan sejak saat itu hingga kini, PTQA Batuan berkiprah dalam Pendidikan Al-Quran untuk mewujudkan para santri penghafal Al-Quran yang <em>taqwallah</em>, <em>berakhlaqul karimah</em>, dan <em>berilmu amaliah beramal ilmiyyah</em>.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
@@ -219,8 +426,8 @@ export default function ProfilPage() {
                 <Target className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Visi</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                "Terwujudnya generasi Qur'ani yang berakhlak karimah, unggul dalam IMTAQ dan IPTEK, serta mampu bersaing di era global berlandaskan manhaj Ahlussunnah wal Jama'ah."
+              <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed font-serif italic">
+                "Mewujudkan para santri penghafal Al-Quran yang taqwallah, berakhlaqul karimah dan berilmu amaliah beramal ilmiyyah"
               </p>
             </motion.div>
 
@@ -237,10 +444,10 @@ export default function ProfilPage() {
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Misi</h3>
               <ul className="space-y-4">
                 {[
-                  "Menyelenggarakan pendidikan Tahfizh Al-Qur'an dengan metode mutqin.",
-                  "Mengintegrasikan ilmu agama (Diniyah) dan ilmu umum.",
-                  "Membentuk karakter santri yang mandiri, disiplin, dan berjiwa pemimpin.",
-                  "Mengembangkan kemampuan berbahasa Arab dan Inggris.",
+                  "Melaksanakan pendidikan tahfizh Al-Quran secara tuntas dan efektif.",
+                  "Menumbuhkan semangat membaca, memahami dan menafsirkan Al-Qur'an serta mengamalkannya dalam kehidupan sehari-hari.",
+                  "Melaksanakan pendidikan Al-Quran yang komprehensif tilawatan, fahman wa amalan.",
+                  "Membekali santri dengan tazkiyatun nafs, pemahaman ilmu agama, serta bahasa Arab sebagai bekal menempuh jenjang yang lebih tinggi dan persiapan untuk terjun ke masyarakat."
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-gray-600 dark:text-gray-300">
                     <CheckCircle2 className="w-6 h-6 text-primary shrink-0" />
@@ -413,20 +620,93 @@ export default function ProfilPage() {
         </div>
       </section>
 
-      {/* Data Huffazh Santri */}
+      {/* Data Huffazh & Khotimin Santri */}
       <section className="py-24 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-12 flex flex-col items-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/20 text-secondary font-semibold text-sm mb-4">
               <span className="w-2 h-2 rounded-full bg-secondary" />
-              Huffazh Al-Qur'an
+              Khataman 30 Juz
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white font-serif">
-              Data Huffazh Santri
+              Data Huffazh & Khotimin
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mt-4 leading-relaxed">
-              Daftar santri PTQA Batuan telah menyelesaikan hafalan 30 juz Al-Qur'an.
+              Daftar santri PTQA Batuan yang telah menyelesaikan khataman hafalan 30 juz Al-Qur'an.
             </p>
+
+            {/* Keterangan Perbedaan Huffazh & Khotimin */}
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center text-left text-xs bg-white dark:bg-gray-900/60 backdrop-blur-sm px-6 py-4.5 rounded-2xl border border-[#D4AF37]/25 shadow-sm max-w-2xl">
+              <div className="flex gap-2.5 items-start">
+                <span className="inline-flex items-center justify-center p-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 rounded-lg shrink-0 mt-0.5">
+                  <Award className="w-4 h-4" />
+                </span>
+                <div>
+                  <p className="font-bold text-[#0a3822] dark:text-emerald-400">Huffazh</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5 leading-relaxed">
+                    Santri yang telah menyelesaikan khataman 30 juz dan **telah menerima syahadah** (ijazah/sertifikat).
+                  </p>
+                </div>
+              </div>
+              <div className="hidden sm:block w-[1px] bg-gray-200 dark:bg-gray-800 self-stretch" />
+              <div className="flex gap-2.5 items-start">
+                <span className="inline-flex items-center justify-center p-1.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 rounded-lg shrink-0 mt-0.5">
+                  <BookOpen className="w-4 h-4" />
+                </span>
+                <div>
+                  <p className="font-bold text-amber-700 dark:text-amber-400">Khotimin</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5 leading-relaxed">
+                    Santri yang telah menyelesaikan khataman 30 juz namun **belum menerima syahadah**.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tab Switcher */}
+          <div className="flex justify-center mb-10">
+            <div className="flex p-1 bg-gray-200/60 dark:bg-gray-800 rounded-xl relative z-10">
+              <button
+                onClick={() => setActiveTab("huffazh")}
+                className={`relative px-5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
+                  activeTab === "huffazh"
+                    ? "text-[#0a3822] dark:text-white"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900"
+                }`}
+              >
+                {activeTab === "huffazh" && (
+                  <motion.div
+                    layoutId="activeTabBg"
+                    className="absolute inset-0 bg-white dark:bg-gray-750 rounded-lg shadow-sm z-0"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Award className="w-4 h-4" />
+                  Huffazh ({huffazh.filter(s => s.has_syahadah !== false).length})
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveTab("khotimin")}
+                className={`relative px-5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
+                  activeTab === "khotimin"
+                    ? "text-[#0a3822] dark:text-white"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900"
+                }`}
+              >
+                {activeTab === "khotimin" && (
+                  <motion.div
+                    layoutId="activeTabBg"
+                    className="absolute inset-0 bg-white dark:bg-gray-750 rounded-lg shadow-sm z-0"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Khotimin ({huffazh.filter(s => s.has_syahadah === false).length})
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Search bar */}
@@ -502,9 +782,17 @@ export default function ProfilPage() {
                             </p>
                             <div className="mt-3 space-y-1">
                               <div className="flex justify-between items-center text-[10px] font-semibold">
-                                <span className="text-[#0B3B24] dark:text-primary-foreground/90 bg-[#0B3B24]/10 dark:bg-primary/20 px-1.5 py-0.5 rounded">
-                                  Hafalan
-                                </span>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[#0B3B24] dark:text-primary-foreground/90 bg-[#0B3B24]/10 dark:bg-primary/20 px-1.5 py-0.5 rounded">
+                                    Hafalan
+                                  </span>
+                                  {santri.has_syahadah !== false && (
+                                    <span className="inline-flex items-center gap-0.5 text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 px-1.5 py-0.5 rounded text-[9px] font-bold border border-emerald-100 dark:border-emerald-900/35">
+                                      <Award className="w-3 h-3 shrink-0" />
+                                      Syahadah
+                                    </span>
+                                  )}
+                                </div>
                                 <span className="text-[#D4AF37] font-bold">
                                   {santri.memorized_juz} Juz
                                 </span>

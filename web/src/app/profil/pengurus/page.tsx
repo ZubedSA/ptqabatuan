@@ -70,7 +70,30 @@ export default function DetailPengurusPage() {
     return sortedKeys.map(key => groupsMap[key]);
   };
 
-  const rowGroups = getRowGroups(roles);
+  const dbRowGroups = getRowGroups(roles);
+
+  // Filter only roles with staff inside, and remove empty groups
+  const activeDbTiers = dbRowGroups
+    .map(group => group.filter(role => groupedStaffs[role.name] && groupedStaffs[role.name].length > 0))
+    .filter(group => group.length > 0);
+
+  // Map other positions to separate tiers at the bottom
+  const otherTiers = otherPositions.map((posName, idx) => [
+    {
+      id: `other-${idx}`,
+      name: posName,
+      priority: 9999 + idx
+    }
+  ]);
+
+  const allTiers = [...activeDbTiers, ...otherTiers];
+
+  const getGridColsClass = (length: number) => {
+    if (length === 1) return "grid-cols-1";
+    if (length === 2) return "grid-cols-2 gap-4 md:gap-8 max-w-5xl";
+    if (length === 3) return "grid-cols-3 gap-2 md:gap-8 max-w-6xl";
+    return "grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-7xl";
+  };
 
   return (
     <div className="flex flex-col min-h-screen pb-16 bg-white dark:bg-background">
@@ -110,172 +133,110 @@ export default function DetailPengurusPage() {
             <p className="text-base italic">Belum ada data pengurus yang dimasukkan.</p>
           </div>
         ) : (
-            <div className="space-y-16">
-              {/* Render active sorted row groups (including parallel roles) */}
-              {rowGroups
-                .filter(group => group.some(role => groupedStaffs[role.name] && groupedStaffs[role.name].length > 0))
-                .map((group, gIdx) => {
-                  if (group.length === 1) {
-                    const role = group[0];
-                    const memberCount = groupedStaffs[role.name]?.length || 0;
-                    const gridClass = memberCount >= 2
-                      ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8"
-                      : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8";
-
-                    return (
-                      <div key={role.id} className="space-y-6">
-                        <div className="flex items-center gap-4">
-                          <h3 className="text-lg font-bold text-[#0B3B24] dark:text-white font-serif bg-[#D4AF37]/10 dark:bg-secondary/20 px-5 py-2 rounded-full border border-[#D4AF37]/20 shadow-sm shrink-0">
-                            {role.name}
-                          </h3>
-                          <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
-                        </div>
-
-                        <div className={gridClass}>
-                          {groupedStaffs[role.name].map((staff, idx) => (
-                            <motion.div
-                              key={staff.id}
-                              initial={{ opacity: 0, y: 20 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 0.5, delay: idx * 0.05 }}
-                              className="group flex flex-col items-center text-center p-4 sm:p-6 rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-secondary/30 transition-all"
-                            >
-                              <div className="relative h-20 w-20 sm:h-28 sm:w-28 rounded-full overflow-hidden mb-4 sm:mb-5 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
-                                {staff.photo ? (
-                                  <img
-                                    src={getDirectImageUrl(staff.photo)}
-                                    alt={staff.name}
-                                    className="h-full w-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="h-full w-full bg-primary/10 text-primary font-bold flex items-center justify-center text-xl sm:text-3xl">
-                                    {staff.name.charAt(0).toUpperCase()}
-                                  </div>
-                                )}
-                              </div>
-                              <h4 className="font-bold text-sm sm:text-lg text-gray-900 dark:text-white leading-tight px-1">
-                                {staff.name}
-                              </h4>
-                              <p className="text-[10px] sm:text-xs text-secondary font-medium tracking-wide uppercase mt-1 sm:mt-2">
-                                {staff.position}
-                              </p>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    // Parallel roles side-by-side row
-                    return (
-                      <div key={`group-${gIdx}`} className={`grid grid-cols-1 md:grid-cols-${group.length} gap-8 items-start`}>
-                        {group.map((role) => {
-                          const staffInRole = groupedStaffs[role.name] || [];
-                          if (staffInRole.length === 0) {
-                            return <div key={role.id} />; // Empty column to keep alignment
-                          }
-                          const memberCount = staffInRole.length;
-                          const gridClass = memberCount >= 2
-                            ? "grid grid-cols-2 md:grid-cols-1 gap-4"
-                            : "grid grid-cols-1 gap-4";
-
-                          return (
-                            <div key={role.id} className="space-y-6">
-                              <div className="flex items-center gap-4">
-                                <h3 className="text-lg font-bold text-[#0B3B24] dark:text-white font-serif bg-[#D4AF37]/10 dark:bg-secondary/20 px-5 py-2 rounded-full border border-[#D4AF37]/20 shadow-sm shrink-0">
-                                  {role.name}
-                                </h3>
-                                <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
-                              </div>
-
-                              <div className={gridClass}>
-                                {staffInRole.map((staff, idx) => (
-                                  <motion.div
-                                    key={staff.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.5, delay: idx * 0.05 }}
-                                    className="group flex flex-col items-center text-center p-4 sm:p-5 rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-secondary/30 transition-all"
-                                  >
-                                    <div className="relative h-16 w-16 sm:h-24 sm:w-24 rounded-full overflow-hidden mb-3 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
-                                      {staff.photo ? (
-                                        <img
-                                          src={getDirectImageUrl(staff.photo)}
-                                          alt={staff.name}
-                                          className="h-full w-full object-cover"
-                                        />
-                                      ) : (
-                                        <div className="h-full w-full bg-primary/10 text-primary font-bold flex items-center justify-center text-lg sm:text-2xl">
-                                          {staff.name.charAt(0).toUpperCase()}
-                                        </div>
-                                      )}
-                                    </div>
-                                    <h4 className="font-bold text-xs sm:text-base text-gray-900 dark:text-white leading-tight px-1">
-                                      {staff.name}
-                                    </h4>
-                                    <p className="text-[9px] sm:text-xs text-secondary font-medium tracking-wide uppercase mt-1">
-                                      {staff.position}
-                                    </p>
-                                  </motion.div>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  }
-                })}
-
-            {/* Render other roles not defined in roles table */}
-            {otherPositions.map((posName) => {
-              const memberCount = groupedStaffs[posName]?.length || 0;
-              const gridClass = memberCount > 2
-                ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8"
-                : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8";
+          <div className="flex flex-col items-center space-y-12">
+            {allTiers.map((group, gIdx) => {
+              const isLast = gIdx === allTiers.length - 1;
+              const isParallel = group.length > 1;
 
               return (
-                <div key={posName} className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <h3 className="text-lg font-bold text-[#0B3B24] dark:text-white font-serif bg-gray-100 dark:bg-secondary/20 px-5 py-2 rounded-full border border-gray-200 shadow-sm shrink-0">
-                      {posName}
-                    </h3>
-                    <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
-                  </div>
+                <div key={`tier-${gIdx}`} className="relative flex flex-col items-center w-full">
+                  {/* Roles Container */}
+                  <div className={`grid w-full justify-center ${getGridColsClass(group.length)}`}>
+                    {group.map((role, rIdx) => {
+                      const staffInRole = groupedStaffs[role.name] || [];
+                      const memberCount = staffInRole.length;
+                      
+                      // Layout for staff members in a specific role
+                      const memberGridClass = memberCount >= 4
+                        ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6"
+                        : memberCount === 3
+                        ? "grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 justify-center"
+                        : memberCount === 2
+                        ? "grid grid-cols-2 gap-4 sm:gap-6 justify-center"
+                        : "grid grid-cols-1 gap-4 justify-center";
 
-                  <div className={gridClass}>
-                    {groupedStaffs[posName].map((staff, idx) => (
-                      <motion.div
-                        key={staff.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: idx * 0.05 }}
-                        className="group flex flex-col items-center text-center p-4 sm:p-6 rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-secondary/30 transition-all"
-                      >
-                        <div className="relative h-20 w-20 sm:h-28 sm:w-28 rounded-full overflow-hidden mb-4 sm:mb-5 border-2 border-[#D4AF37]/35 group-hover:scale-105 transition-transform duration-300">
-                          {staff.photo ? (
-                            <img
-                              src={getDirectImageUrl(staff.photo)}
-                              alt={staff.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="h-full w-full bg-[#0a3822]/10 text-[#0a3822] font-bold flex items-center justify-center text-xl sm:text-3xl">
-                              {staff.name.charAt(0).toUpperCase()}
+                      return (
+                        <div key={role.id} className="relative flex flex-col items-center">
+                          {/* Connector Area above each role within parallel group */}
+                          {isParallel && (
+                            <div className="w-full h-6 md:h-8 relative">
+                              {/* Horizontal segments connecting to the center */}
+                              <div className={`absolute top-0 h-[2px] bg-[#D4AF37]/40 ${
+                                rIdx === 0 ? 'left-1/2 right-0' : 
+                                rIdx === group.length - 1 ? 'left-0 right-1/2' : 
+                                'left-0 right-0'
+                              }`} />
+                              {/* Vertical drop down to the card */}
+                              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] bg-gradient-to-b from-[#D4AF37]/40 to-[#0a3822]" />
                             </div>
                           )}
+
+                          {/* Role Header Card */}
+                          <div className="relative z-10 flex flex-col items-center">
+                            <div className="bg-gradient-to-r from-[#0a3822] to-[#125837] dark:from-[#0a3822]/90 dark:to-emerald-950 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl sm:rounded-2xl border-2 border-[#D4AF37]/45 shadow-[0_4px_12px_rgba(10,56,34,0.15)] dark:shadow-none text-center">
+                              <h3 className="text-[10px] sm:text-base font-bold text-white font-serif tracking-wide uppercase">
+                                {role.name}
+                              </h3>
+                            </div>
+                            
+                            {/* Small arrow/indicator under role header */}
+                            <div className="w-[2px] h-4 sm:h-6 bg-gradient-to-b from-[#0a3822] to-transparent dark:from-[#D4AF37]/60 dark:to-transparent" />
+                          </div>
+
+                          {/* Members Grid Container */}
+                          <div className={`${memberGridClass} w-full px-1 sm:px-4`}>
+                            {staffInRole.map((staff, idx) => (
+                              <motion.div
+                                key={staff.id}
+                                initial={{ opacity: 0, y: 15 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                                className="group relative flex flex-col items-center text-center p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-gray-900/60 border border-gray-100 dark:border-gray-800 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-xl hover:border-[#D4AF37]/50 dark:hover:border-[#D4AF37]/35 hover:-translate-y-1 transition-all duration-300 backdrop-blur-sm"
+                              >
+                                {/* Photo with double border */}
+                                <div className="relative h-14 w-14 sm:h-24 sm:w-24 rounded-full overflow-hidden mb-2 sm:mb-3.5 border-[3px] border-double border-[#D4AF37]/50 group-hover:border-[#D4AF37] transition-all duration-300 shadow-md group-hover:scale-105">
+                                  {staff.photo ? (
+                                    <img
+                                      src={getDirectImageUrl(staff.photo)}
+                                      alt={staff.name}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="h-full w-full bg-[#0a3822]/10 dark:bg-gray-800 text-[#0a3822] dark:text-[#D4AF37] font-bold flex items-center justify-center text-base sm:text-2xl font-serif">
+                                      {staff.name.charAt(0).toUpperCase()}
+                                    </div>
+                                  )}
+                                </div>
+                                <h4 className="font-bold text-[10px] sm:text-sm text-gray-900 dark:text-white leading-tight px-0.5 sm:px-1 font-serif group-hover:text-[#0a3822] dark:group-hover:text-[#D4AF37] transition-colors duration-200">
+                                  {staff.name}
+                                </h4>
+                                <p className="text-[8px] sm:text-xs text-secondary font-medium tracking-wide uppercase mt-0.5 sm:mt-1">
+                                  {staff.position}
+                                </p>
+                              </motion.div>
+                            ))}
+                          </div>
                         </div>
-                        <h4 className="font-bold text-sm sm:text-lg text-gray-900 dark:text-white leading-tight px-1">
-                          {staff.name}
-                        </h4>
-                        <p className="text-[10px] sm:text-xs text-secondary font-medium tracking-wide uppercase mt-1 sm:mt-2">
-                          {staff.position}
-                        </p>
-                      </motion.div>
-                    ))}
+                      );
+                    })}
                   </div>
+
+                  {/* Vertical Connector to Next Level */}
+                  {!isLast && (
+                    <div className="w-full flex justify-center py-6">
+                      <div className="flex flex-col items-center">
+                        {/* Vertical Line with gold pulse dot */}
+                        <div className="w-[2px] h-10 bg-gradient-to-b from-[#D4AF37]/60 to-[#0a3822]/60 dark:from-[#D4AF37]/60 dark:to-emerald-900/60 relative">
+                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-[#D4AF37] rounded-full shadow-[0_0_8px_#D4AF37] animate-ping" />
+                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-[#D4AF37] rounded-full shadow-[0_0_8px_#D4AF37]" />
+                        </div>
+                        <svg className="w-4 h-4 text-[#0a3822] dark:text-[#D4AF37] -mt-1.5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}

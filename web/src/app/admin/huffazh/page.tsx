@@ -19,6 +19,7 @@ export default function AdminHuffazhPage() {
   const [memorizedJuz, setMemorizedJuz] = useState<number>(30);
   const [photoUrl, setPhotoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [hasSyahadah, setHasSyahadah] = useState(true);
   
   const supabase = createClient();
 
@@ -86,6 +87,7 @@ export default function AdminHuffazhPage() {
     setSelectedFile(null);
     setLocalPreview("");
     setOriginalPhoto("");
+    setHasSyahadah(true);
     setModalOpen(true);
   };
 
@@ -99,6 +101,7 @@ export default function AdminHuffazhPage() {
     setSelectedFile(null);
     setLocalPreview("");
     setOriginalPhoto(santri.photo || "");
+    setHasSyahadah(santri.has_syahadah !== false);
     setModalOpen(true);
   };
 
@@ -171,6 +174,7 @@ export default function AdminHuffazhPage() {
       category,
       memorized_juz: Number(memorizedJuz),
       photo: finalPhoto || null,
+      has_syahadah: hasSyahadah,
     };
 
     if (editingSantri) {
@@ -295,9 +299,18 @@ export default function AdminHuffazhPage() {
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900">{santri.name}</td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#D4AF37]/10 text-[#0B3B24] border border-[#D4AF37]/25">
-                        {santri.category}
-                      </span>
+                      <div className="flex flex-col gap-1.5">
+                        <span className="inline-flex items-center w-fit px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#D4AF37]/10 text-[#0B3B24] border border-[#D4AF37]/25">
+                          {santri.category}
+                        </span>
+                        <span className={`inline-flex items-center w-fit px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          santri.has_syahadah !== false 
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                            : "bg-amber-50 text-amber-700 border border-amber-200"
+                        }`}>
+                          {santri.has_syahadah !== false ? "Huffazh (Syahadah)" : "Khotimin"}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-gray-600">{santri.class_or_status}</td>
                     <td className="px-6 py-4">
@@ -429,6 +442,19 @@ export default function AdminHuffazhPage() {
                   onChange={(e) => setMemorizedJuz(Number(e.target.value))}
                   className="w-full px-3.5 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
+              </div>
+
+              <div className="flex items-center gap-2.5 py-1">
+                <input
+                  type="checkbox"
+                  id="hasSyahadah"
+                  checked={hasSyahadah}
+                  onChange={(e) => setHasSyahadah(e.target.checked)}
+                  className="w-4.5 h-4.5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded cursor-pointer accent-[#0a3822]"
+                />
+                <label htmlFor="hasSyahadah" className="text-sm font-semibold text-gray-700 cursor-pointer select-none">
+                  Telah Menerima Syahadah (Sertifikat)
+                </label>
               </div>
 
               <div>
