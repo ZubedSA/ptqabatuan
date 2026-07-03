@@ -25,6 +25,11 @@ export const metadata: Metadata = {
   title: "Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan",
   description: "Website resmi Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan. Media informasi, dakwah, dan pendaftaran santri baru.",
   keywords: ["Pondok Pesantren", "Tahfizh", "Al-Usymuni", "Batuan", "Pesantren Modern", "PPDB"],
+  icons: {
+    icon: "/LOGO PTQA.jpeg",
+    shortcut: "/LOGO PTQA.jpeg",
+    apple: "/LOGO PTQA.jpeg",
+  },
 };
 
 export default function RootLayout({

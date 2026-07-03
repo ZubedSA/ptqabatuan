@@ -7,24 +7,24 @@ import { createClient } from "@/lib/supabase/client";
 import { getDirectImageUrl } from "@/lib/utils";
 import { Search, Calendar, User, ArrowRight, Loader2, BookOpen } from "lucide-react";
 
-export default function ArtikelPage() {
+export default function BeritaPage() {
   const supabase = createClient();
-  const [articles, setArticles] = useState<any[]>([]);
+  const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [categories, setCategories] = useState<string[]>(["Semua"]);
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchNews = async () => {
       const { data, error } = await supabase
-        .from("articles")
+        .from("news")
         .select("*")
         .eq("is_published", true)
         .order("created_at", { ascending: false });
 
       if (data) {
-        setArticles(data);
+        setNews(data);
 
         // Extract unique categories
         const uniqueCats = Array.from(new Set(data.map(d => d.category).filter(Boolean))) as string[];
@@ -33,18 +33,18 @@ export default function ArtikelPage() {
       setLoading(false);
     };
 
-    fetchArticles();
+    fetchNews();
   }, []);
 
-  const filteredArticles = articles.filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (article.excerpt && article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === "Semua" || article.category === selectedCategory;
+  const filteredNews = news.filter(item => {
+    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.excerpt && item.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesCategory = selectedCategory === "Semua" || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const featuredArticle = filteredArticles.length > 0 ? filteredArticles[0] : null;
-  const regularArticles = filteredArticles.length > 1 ? filteredArticles.slice(1) : [];
+  const featuredNews = filteredNews.length > 0 ? filteredNews[0] : null;
+  const regularNews = filteredNews.length > 1 ? filteredNews.slice(1) : [];
 
   return (
     <div className="flex flex-col min-h-screen pb-12 bg-white dark:bg-background">
@@ -62,7 +62,7 @@ export default function ArtikelPage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-serif leading-tight"
           >
-            Kabar <span className="text-[#D4AF37]">PTQA Batuan</span>
+            Berita <span className="text-[#D4AF37]">PTQA</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
@@ -70,7 +70,7 @@ export default function ArtikelPage() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed"
           >
-            Temukan berita terbaru, artikel keagamaan, kajian tahfizh, dan berbagai informasi seputar Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan.
+            Temukan berita terbaru, kegiatan santri, pengumuman, dan berbagai informasi seputar Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan.
           </motion.p>
         </div>
       </section>
@@ -86,8 +86,8 @@ export default function ArtikelPage() {
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === cat
-                      ? "bg-[#0a3822] text-white shadow-md"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
+                    ? "bg-[#0a3822] text-white shadow-md"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
                     }`}
                 >
                   {cat}
@@ -99,7 +99,7 @@ export default function ArtikelPage() {
             <div className="relative w-full md:w-80 shrink-0">
               <input
                 type="text"
-                placeholder="Cari artikel..."
+                placeholder="Cari berita..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-gray-900 dark:text-white transition-all"
@@ -116,20 +116,20 @@ export default function ArtikelPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
-              <p className="text-gray-500">Memuat artikel...</p>
+              <p className="text-gray-500">Memuat berita...</p>
             </div>
-          ) : filteredArticles.length === 0 ? (
+          ) : filteredNews.length === 0 ? (
             <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border border-gray-100 dark:border-gray-800">
               <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-6 h-6 text-gray-400" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Tidak Ditemukan</h3>
-              <p className="text-gray-500">Belum ada artikel yang cocok dengan pencarian atau filter Anda.</p>
+              <p className="text-gray-500">Belum ada berita yang cocok dengan pencarian atau filter Anda.</p>
             </div>
           ) : (
             <div className="space-y-16">
-              {/* Featured Article */}
-              {featuredArticle && (
+              {/* Featured News */}
+              {featuredNews && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -137,10 +137,10 @@ export default function ArtikelPage() {
                   className="group relative bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col lg:flex-row"
                 >
                   <div className="lg:w-3/5 h-64 sm:h-80 lg:h-auto relative overflow-hidden">
-                    {featuredArticle.thumbnail ? (
+                    {featuredNews.thumbnail ? (
                       <img
-                        src={getDirectImageUrl(featuredArticle.thumbnail)}
-                        alt={featuredArticle.title}
+                        src={getDirectImageUrl(featuredNews.thumbnail)}
+                        alt={featuredNews.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     ) : (
@@ -150,7 +150,7 @@ export default function ArtikelPage() {
                     )}
                     <div className="absolute top-4 left-4">
                       <span className="bg-[#D4AF37] text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full shadow-lg">
-                        {featuredArticle.category}
+                        {featuredNews.category}
                       </span>
                     </div>
                   </div>
@@ -158,19 +158,19 @@ export default function ArtikelPage() {
                     <div className="flex items-center gap-4 text-xs font-medium text-gray-500 mb-4">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4 text-primary" />
-                        {new Date(featuredArticle.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}
+                        {new Date(featuredNews.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}
                       </div>
                     </div>
-                    <Link href={`/artikel/${featuredArticle.slug}`}>
+                    <Link href={`/berita/${featuredNews.slug}`}>
                       <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-primary transition-colors font-serif leading-tight">
-                        {featuredArticle.title}
+                        {featuredNews.title}
                       </h2>
                     </Link>
                     <p className="text-gray-600 dark:text-gray-300 mb-8 line-clamp-3 leading-relaxed">
-                      {featuredArticle.excerpt || "Baca selengkapnya mengenai artikel ini..."}
+                      {featuredNews.excerpt || "Baca selengkapnya mengenai berita ini..."}
                     </p>
                     <Link
-                      href={`/artikel/${featuredArticle.slug}`}
+                      href={`/berita/${featuredNews.slug}`}
                       className="inline-flex items-center gap-2 text-primary font-semibold hover:text-[#D4AF37] transition-colors group/link mt-auto w-fit"
                     >
                       Baca Selengkapnya
@@ -180,22 +180,22 @@ export default function ArtikelPage() {
                 </motion.div>
               )}
 
-              {/* Grid Articles */}
-              {regularArticles.length > 0 && (
+              {/* Grid News */}
+              {regularNews.length > 0 && (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {regularArticles.map((article, idx) => (
+                  {regularNews.map((item, idx) => (
                     <motion.div
-                      key={article.id}
+                      key={item.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: idx * 0.1 }}
                       className="group flex flex-col bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100 dark:border-gray-800 transition-all"
                     >
-                      <Link href={`/artikel/${article.slug}`} className="relative h-48 overflow-hidden block">
-                        {article.thumbnail ? (
+                      <Link href={`/berita/${item.slug}`} className="relative h-48 overflow-hidden block">
+                        {item.thumbnail ? (
                           <img
-                            src={getDirectImageUrl(article.thumbnail)}
-                            alt={article.title}
+                            src={getDirectImageUrl(item.thumbnail)}
+                            alt={item.title}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         ) : (
@@ -205,28 +205,28 @@ export default function ArtikelPage() {
                         )}
                         <div className="absolute top-3 left-3">
                           <span className="bg-white/90 backdrop-blur-sm text-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded shadow-sm">
-                            {article.category}
+                            {item.category}
                           </span>
                         </div>
                       </Link>
                       <div className="p-6 flex flex-col flex-1">
                         <div className="flex items-center gap-2 text-[11px] font-medium text-gray-500 mb-3">
                           <Calendar className="w-3.5 h-3.5" />
-                          {new Date(article.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}
+                          {new Date(item.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}
                         </div>
-                        <Link href={`/artikel/${article.slug}`}>
+                        <Link href={`/berita/${item.slug}`}>
                           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                            {article.title}
+                            {item.title}
                           </h3>
                         </Link>
                         <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4 flex-1">
-                          {article.excerpt || "Klik untuk membaca selengkapnya..."}
+                          {item.excerpt || "Klik untuk membaca selengkapnya..."}
                         </p>
                         <Link
-                          href={`/artikel/${article.slug}`}
+                          href={`/berita/${item.slug}`}
                           className="text-primary text-sm font-semibold flex items-center gap-1 group-hover:text-[#D4AF37] transition-colors w-fit"
                         >
-                          Baca Artikel <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                          Baca Berita <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                         </Link>
                       </div>
                     </motion.div>

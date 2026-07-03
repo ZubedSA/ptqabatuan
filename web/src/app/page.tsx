@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Users, Award, Building2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { getDirectImageUrl } from "@/lib/utils";
 
 const stats = [
   { label: "Santri Aktif", value: "30+", icon: Users },
@@ -11,25 +14,25 @@ const stats = [
   { label: "Fasilitas Modern", value: "10+", icon: Building2 },
 ];
 
-const programs = [
-  {
-    title: "Tahfizh Al-Qur'an",
-    description: "Program unggulan hafalan 30 juz dengan sanad bersambung dan metode mutqin.",
-    image: "https://images.unsplash.com/photo-1609599006353-e629aaab31fa?q=80&w=600&auto=format&fit=crop",
-  },
-  {
-    title: "Diniyah & Kitab Kuning",
-    description: "Pengkajian turats Islami berhaluan Ahlussunnah wal Jama'ah.",
-    image: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=600&auto=format&fit=crop",
-  },
-  {
-    title: "Bahasa Arab & Inggris",
-    description: "Pembiasaan bahasa asing harian untuk mencetak generasi global.",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=600&auto=format&fit=crop",
-  },
-];
-
 export default function Home() {
+  const supabase = createClient();
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      const { data } = await supabase
+        .from("educational_programs")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .limit(3);
+      
+      if (data) setPrograms(data);
+      setLoading(false);
+    };
+
+    fetchPrograms();
+  }, []);
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -57,7 +60,7 @@ export default function Home() {
             <div className="w-16 sm:w-24 h-0.5 bg-[#D4AF37] mb-6 sm:mb-8" />
 
             <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-10 sm:mb-12 max-w-3xl mx-auto font-light leading-relaxed text-center">
-              Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan mendidik santri menjadi hafidz yang menguasai ilmu agama, teknologi, dan bahasa untuk menjawab tantangan zaman.
+              Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan mendidik santri menjadi hafizh qur'an yang taqwallah, berakhlaqul karimah, berilmu amaliyah beramal ilmiyah.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto">
@@ -267,36 +270,50 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {programs.map((program, index) => (
-              <motion.div
-                key={program.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="group rounded-3xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xl hover:shadow-2xl transition-all"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={program.image}
-                    alt={program.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <h3 className="absolute bottom-6 left-6 text-2xl font-bold text-white">{program.title}</h3>
-                </div>
-                <div className="p-8">
-                  <p className="text-gray-600 dark:text-gray-400 mb-6">{program.description}</p>
-                  <Link
-                    href="/program"
-                    className="inline-flex items-center gap-2 text-primary font-semibold hover:text-secondary transition-colors"
-                  >
-                    Detail Program
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+            {loading ? (
+              <div className="col-span-3 text-center text-gray-500 py-10 font-medium">Memuat program...</div>
+            ) : programs.length === 0 ? (
+              <div className="col-span-3 text-center text-gray-500 py-10 font-medium">Belum ada program.</div>
+            ) : (
+              programs.map((program, index) => (
+                <motion.div
+                  key={program.id || program.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  className="group flex flex-col rounded-3xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xl hover:shadow-2xl transition-all h-full"
+                >
+                  <div className="relative h-64 overflow-hidden bg-gray-200 dark:bg-gray-800 shrink-0">
+                    {program.image_url ? (
+                      <img
+                        src={getDirectImageUrl(program.image_url)}
+                        alt={program.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <BookOpen className="w-12 h-12 opacity-50" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <h3 className="absolute bottom-6 left-6 text-2xl font-bold text-white pr-6">{program.title}</h3>
+                  </div>
+                  <div className="p-8 flex flex-col flex-1">
+                    <p className="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3 leading-relaxed">{program.description}</p>
+                    <div className="mt-auto">
+                      <Link
+                        href="/program"
+                        className="inline-flex items-center gap-2 text-primary font-semibold hover:text-secondary transition-colors group/link"
+                      >
+                        Detail Program
+                        <ArrowRight className="h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       </section>

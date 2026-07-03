@@ -18,6 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "PPDB", href: "/admin/ppdb", icon: Users },
     { name: "Donasi & Wakaf", href: "/admin/donasi", icon: Heart },
+    { name: "Berita", href: "/admin/berita", icon: FileText },
     { name: "Artikel", href: "/admin/artikel", icon: FileText },
     { name: "Galeri", href: "/admin/galeri", icon: ImageIcon },
     { name: "Program", href: "/admin/program", icon: BookOpen },

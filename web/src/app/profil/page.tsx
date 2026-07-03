@@ -139,7 +139,14 @@ export default function ProfilPage() {
 
   // Group huffazh by category
   const groupedHuffazh = filteredHuffazh.reduce((acc: { [key: string]: any[] }, santri) => {
-    const cat = santri.category || "Kategori Pertama";
+    let cat = santri.category || "Pertama";
+    // Hapus kata "Kategori" (case-insensitive) dan rapikan spasi
+    cat = cat.replace(/kategori\s+/gi, '').trim();
+    // Kapitalisasi huruf pertama agar rapi
+    if (cat.length > 0) {
+      cat = cat.charAt(0).toUpperCase() + cat.slice(1);
+    }
+    
     if (!acc[cat]) {
       acc[cat] = [];
     }
@@ -204,7 +211,7 @@ export default function ProfilPage() {
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                 Kisah pendirian pondok ini dipenuhi dengan doa ikhlas para masyayikh, amanah bimbingan yang tulus, serta restu keluarga besar yang hingga kini terus berkiprah melayani umat.
               </p>
-              
+
               <button
                 onClick={toggleHistory}
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0a3822] hover:bg-[#0a3822]/90 text-white rounded-full text-sm font-semibold shadow hover:shadow-md transition-all cursor-pointer group"
@@ -299,10 +306,10 @@ export default function ProfilPage() {
                             Berawal dari sebuah doa yang terucap oleh Pendiri dan Pengasuh Pondok Pesantren Al-Usymuni Tarate, <strong>Drs. KH. Abdullah Cholil, M.Hum</strong> saat ditanya oleh masyarakat pada saat membeli sebidang tanah di Desa Batuan pada tahun 2004.
                           </p>
                           <p>
-                            Beliau menjawab sambil berdoa dengan penuh keikhlasan: 
+                            Beliau menjawab sambil berdoa dengan penuh keikhlasan:
                           </p>
                           <span className="block font-serif italic text-[#0a3822] dark:text-[#D4AF37] bg-gray-50 dark:bg-gray-950 p-3 rounded-xl mt-3 text-center border border-gray-100 dark:border-gray-800">
-                            "Mik pola deggik bede nak poto kaule majege pondok e kakdinto"<br/>
+                            "Mik pola deggik bede nak poto kaule majege pondok e kakdinto"<br />
                             <span className="text-[10px] font-sans text-gray-500 block mt-1">(Barangkali suatu saat nanti ada keturunan saya yang bangun pondok disini)</span>
                           </span>
                         </div>
@@ -507,7 +514,7 @@ export default function ProfilPage() {
                           </h3>
                           <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
                         </div>
-                        
+
                         <div className={gridClass}>
                           {groupedStaffs[role.name].map((staff, idx) => (
                             <motion.div
@@ -564,7 +571,7 @@ export default function ProfilPage() {
                                 </h3>
                                 <div className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
                               </div>
-                              
+
                               <div className={gridClass}>
                                 {staffInRole.map((staff, idx) => (
                                   <motion.div
@@ -626,7 +633,7 @@ export default function ProfilPage() {
           <div className="text-center max-w-3xl mx-auto mb-12 flex flex-col items-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/20 text-secondary font-semibold text-sm mb-4">
               <span className="w-2 h-2 rounded-full bg-secondary" />
-              Khataman 30 Juz
+              Huffazh & Khotimin PTQA Batuan
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white font-serif">
               Data Huffazh & Khotimin
@@ -644,7 +651,7 @@ export default function ProfilPage() {
                 <div>
                   <p className="font-bold text-[#0a3822] dark:text-emerald-400">Huffazh</p>
                   <p className="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5 leading-relaxed">
-                    Santri yang telah menyelesaikan khataman 30 juz dan **telah menerima syahadah** (ijazah/sertifikat).
+                    Santri yang telah menyelasaikan hafalan Al-Quran 30 Juz serta lulus ujian lajnah 30 sebagai syarat mendapatkan syahadah hifzhul qur'an (ijazah/sertifikat).
                   </p>
                 </div>
               </div>
@@ -656,7 +663,7 @@ export default function ProfilPage() {
                 <div>
                   <p className="font-bold text-amber-700 dark:text-amber-400">Khotimin</p>
                   <p className="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5 leading-relaxed">
-                    Santri yang telah menyelesaikan khataman 30 juz namun **belum menerima syahadah**.
+                    Santri yang telah selesai menyetorkan hafalan Al-Quran 30 Juz dan berproses mengikuti ujian lajnah 30 juz.
                   </p>
                 </div>
               </div>
@@ -668,11 +675,10 @@ export default function ProfilPage() {
             <div className="flex p-1 bg-gray-200/60 dark:bg-gray-800 rounded-xl relative z-10">
               <button
                 onClick={() => setActiveTab("huffazh")}
-                className={`relative px-5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
-                  activeTab === "huffazh"
-                    ? "text-[#0a3822] dark:text-white"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900"
-                }`}
+                className={`relative px-5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${activeTab === "huffazh"
+                  ? "text-[#0a3822] dark:text-white"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-900"
+                  }`}
               >
                 {activeTab === "huffazh" && (
                   <motion.div
@@ -688,11 +694,10 @@ export default function ProfilPage() {
               </button>
               <button
                 onClick={() => setActiveTab("khotimin")}
-                className={`relative px-5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
-                  activeTab === "khotimin"
-                    ? "text-[#0a3822] dark:text-white"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900"
-                }`}
+                className={`relative px-5 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${activeTab === "khotimin"
+                  ? "text-[#0a3822] dark:text-white"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-900"
+                  }`}
               >
                 {activeTab === "khotimin" && (
                   <motion.div

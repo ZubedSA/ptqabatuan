@@ -12,6 +12,7 @@ const navLinks = [
   { name: "Beranda", href: "/" },
   { name: "Profil", href: "/profil" },
   { name: "Program", href: "/program" },
+  { name: "Berita", href: "/berita" },
   { name: "Artikel", href: "/artikel" },
   { name: "Galeri", href: "/galeri" },
   { name: "PPDB", href: "/ppdb" },
@@ -92,11 +93,13 @@ export function Navbar() {
                 />
               </div>
               <div className="flex flex-col">
-                <img
-                  src="/khot.png"
-                  alt="Khot PTQA Batuan"
-                  className="h-7 sm:h-8 w-auto mb-1 group-hover:brightness-125 transition-all"
-                />
+                <span 
+                  className="text-white text-xl sm:text-2xl leading-none mb-1 font-bold group-hover:text-[#D4AF37] transition-all pb-1"
+                  style={{ fontFamily: "'Al Jazeera', 'AlJazeera', sans-serif", letterSpacing: "1px" }}
+                  dir="rtl"
+                >
+                  معهد الأشموني لتحفيظ القرآن
+                </span>
                 <span className="text-[9px] sm:text-[10px] text-[#D4AF37] font-semibold tracking-[0.18em] uppercase leading-none mt-0.5">
                   PP. Tahfizh Qur&#39;an Al-Usymuni
                 </span>
@@ -197,7 +200,13 @@ export function Navbar() {
                       className="object-contain p-0.5"
                     />
                   </div>
-                  <img src="/khot.png" alt="Khot PTQA Batuan" className="h-7 w-auto" />
+                  <span 
+                    className="text-white text-xl font-bold leading-none pb-1"
+                    style={{ fontFamily: "'Al Jazeera', 'AlJazeera', sans-serif", letterSpacing: "1px" }}
+                    dir="rtl"
+                  >
+                    معهد الأشموني لتحفيظ القرآن
+                  </span>
                 </div>
                 <button
                   type="button"
