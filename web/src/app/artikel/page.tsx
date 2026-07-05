@@ -54,7 +54,7 @@ export default function ArtikelPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold text-sm mb-6">
             <BookOpen className="w-4 h-4" />
-            Wawasan & Informasi
+            Wawasan & Inspirasi
           </div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -62,7 +62,7 @@ export default function ArtikelPage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-serif leading-tight"
           >
-            Kabar <span className="text-[#D4AF37]">PTQA Batuan</span>
+            Artikel <span className="text-[#D4AF37]">PTQA</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
@@ -70,7 +70,7 @@ export default function ArtikelPage() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed"
           >
-            Temukan berita terbaru, artikel keagamaan, kajian tahfizh, dan berbagai informasi seputar Pondok Pesantren Tahfizh Qur'an Al-Usymuni Batuan.
+            Media dakwah dan literasi Islam yang menghadirkan berbagai tulisan seputar Al-Qur’an dan ilmu keislaman serta nilai-nilai pendidikan pesantren.
           </motion.p>
         </div>
       </section>
@@ -86,8 +86,8 @@ export default function ArtikelPage() {
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === cat
-                      ? "bg-[#0a3822] text-white shadow-md"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
+                    ? "bg-[#0a3822] text-white shadow-md"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
                     }`}
                 >
                   {cat}

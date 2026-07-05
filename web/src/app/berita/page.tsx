@@ -54,7 +54,7 @@ export default function BeritaPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold text-sm mb-6">
             <BookOpen className="w-4 h-4" />
-            Wawasan & Informasi
+            Kabar & Informasi
           </div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
