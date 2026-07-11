@@ -216,9 +216,9 @@ export default function Home() {
               className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl mb-10 lg:mb-0"
             >
               <img
-                src="https://images.unsplash.com/photo-1552858725-2758b5fb1286?q=80&w=800&auto=format&fit=crop"
+                src="/pengasuh.jpeg"
                 alt="Pengasuh Pondok"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
                 <h3 className="text-2xl font-bold text-white">KH. Miftahul Arifin, Lc.</h3>
