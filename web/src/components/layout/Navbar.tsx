@@ -37,8 +37,8 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Jangan render navbar publik di halaman admin
-  if (pathname?.startsWith("/admin")) return null;
+  // Jangan render navbar publik di halaman admin atau halaman login rahasia
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/in-admin")) return null;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -201,7 +201,7 @@ export function Navbar() {
                     />
                   </div>
                   <span 
-                    className="text-white text-xl font-bold leading-none pb-1"
+                    className="text-white text-[15px] sm:text-xl font-bold whitespace-nowrap leading-none pb-1"
                     style={{ fontFamily: "'Al Jazeera', 'AlJazeera', sans-serif", letterSpacing: "1px" }}
                     dir="rtl"
                   >

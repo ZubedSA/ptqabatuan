@@ -37,17 +37,17 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Protect /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/admin/login')) {
+  if (request.nextUrl.pathname.startsWith('/admin')) {
     if (!user) {
-      // no user, redirect to login page
+      // no user, redirect to home page instead of login to hide the admin portal
       const url = request.nextUrl.clone()
-      url.pathname = '/admin/login'
+      url.pathname = '/'
       return NextResponse.redirect(url)
     }
   }
 
   // If user is already logged in and tries to access login page, redirect to dashboard
-  if (request.nextUrl.pathname.startsWith('/admin/login') && user) {
+  if (request.nextUrl.pathname.startsWith('/in-admin') && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'
     return NextResponse.redirect(url)
@@ -57,5 +57,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/in-admin'],
 }

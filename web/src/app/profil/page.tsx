@@ -146,7 +146,7 @@ export default function ProfilPage() {
     if (cat.length > 0) {
       cat = cat.charAt(0).toUpperCase() + cat.slice(1);
     }
-    
+
     if (!acc[cat]) {
       acc[cat] = [];
     }
@@ -831,12 +831,12 @@ export default function ProfilPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { title: "Musholla PTQA", img: "https://images.unsplash.com/photo-1564683214965-3619addd900d?q=80&w=400" },
-              { title: "Asrama Santri yang Nyaman", img: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=400" },
-              { title: "Gedung Sekolah Modern", img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400" },
-              { title: "Perpustakaan Digital", img: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=400" },
-              { title: "Laboratorium Komputer", img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=400" },
-              { title: "Klinik Kesehatan", img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=400" },
+              { title: "Musholla PTQA", img: "/musholla.jpeg" },
+              { title: "Asrama Santri", img: "/kelas.jpeg" },
+              { title: "Gedung Maqori' PTQA", img: "/ruang maqori'.jpeg" },
+              { title: "Studio Maqori' PTQA", img: "/studio.jpeg" },
+              { title: "Lapangan Olahraga", img: "/lapangan.jpeg" },
+              { title: "Dapur Santri", img: "/dapur.jpeg" },
             ].map((fasilitas, i) => (
               <motion.div
                 key={i}

@@ -26,7 +26,7 @@ export default function Home() {
         .select("*")
         .order("created_at", { ascending: true })
         .limit(3);
-      
+
       if (data) setPrograms(data);
       setLoading(false);
     };
@@ -239,7 +239,7 @@ export default function Home() {
                 Membangun Peradaban Melalui Pendidikan Qur'ani
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                "Alhamdulillah, segala puji bagi Allah. Pondok Pesantren Al-Usymuni hadir sebagai jawaban atas tantangan umat di era modern. Kami berkomitmen untuk tidak hanya mencetak penghafal Al-Qur'an, tetapi juga generasi yang memahami maknanya, mengamalkan isinya, dan berakhlak mulia di tengah masyarakat."
+                "Alhamdulillah, segala puji bagi Allah. Pondok Pesantren Tahfizh Qur'an Al-Usymuni hadir sebagai jawaban atas tantangan umat di era modern. Kami berkomitmen untuk tidak hanya mencetak penghafal Al-Qur'an, tetapi juga generasi yang memahami maknanya, mengamalkan isinya, dan berakhlak mulia di tengah masyarakat."
               </p>
               <p className="text-2xl font-arabic text-primary mb-8 text-right leading-loose" dir="rtl">
                 خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ

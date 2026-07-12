@@ -2,17 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createBrowserClient } from "@supabase/ssr";
 import { LayoutDashboard, FileText, Image as ImageIcon, Users, BookOpen, Settings, LogOut, Menu, X, UserCheck, Award, Heart } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
-  // Jika halaman login, jangan tampilkan sidebar
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
-  }
+  const handleLogout = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    await supabase.auth.signOut();
+    router.push("/in-admin");
+    router.refresh();
+  };
 
   const menuItems = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -109,7 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </svg>
             </Link>
             <span className="h-4 w-[1px] bg-gray-200" />
-            <button className="flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors cursor-pointer">
+            <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors cursor-pointer">
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Logout</span>
             </button>
