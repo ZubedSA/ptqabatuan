@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Users, Award, Building2 } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Award, Building2, ClipboardList, Navigation } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getDirectImageUrl } from "@/lib/utils";
@@ -343,6 +343,103 @@ export default function Home() {
               Daftar PPDB Online Sekarang
             </Link>
           </motion.div>
+        </div>
+      </section>
+      {/* Identitas Yayasan & Peta Lokasi */}
+      <section className="py-24 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+
+            {/* Kartu Identitas Yayasan */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="bg-[#0B3B24] rounded-3xl p-8 sm:p-10 shadow-2xl border border-[#D4AF37]/20 relative overflow-hidden"
+            >
+              {/* Ornamen latar belakang */}
+              <div className="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+                <ClipboardList className="w-64 h-64 text-[#D4AF37]" />
+              </div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-8">
+                  <ClipboardList className="w-7 h-7 sm:w-8 sm:h-8 text-[#D4AF37]" />
+                  <h3 className="text-2xl sm:text-3xl font-bold text-[#D4AF37] font-serif">
+                    Identitas Yayasan
+                  </h3>
+                </div>
+
+                <div className="space-y-5 text-sm sm:text-base">
+                  <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/10 pb-4 gap-2">
+                    <span className="text-gray-400 font-medium tracking-wide">Nama Resmi</span>
+                    <span className="text-white font-semibold text-left sm:text-right">Pondok Pesantren Tahfizh Qur'an<br className="hidden sm:block" />Al-Usymuni Batuan</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/10 pb-4 gap-2">
+                    <span className="text-gray-400 font-medium tracking-wide">Nama Populer</span>
+                    <span className="text-white font-semibold text-left sm:text-right">PTQA Batuan</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/10 pb-4 gap-2">
+                    <span className="text-gray-400 font-medium tracking-wide">SK Kemenkumham</span>
+                    <span className="text-white font-semibold text-left sm:text-right">AHU-0014517.AH.19.10.2021</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/10 pb-4 gap-2">
+                    <span className="text-gray-400 font-medium tracking-wide">Tanggal SK</span>
+                    <span className="text-white font-semibold text-left sm:text-right">19 Oktober 2021</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/10 pb-4 gap-2">
+                    <span className="text-gray-400 font-medium tracking-wide">Kedudukan</span>
+                    <span className="text-white font-semibold text-left sm:text-right">Jl. Raya Batuan, Sumenep,<br className="hidden sm:block" />Jawa Timur</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between pb-2 gap-2">
+                    <span className="text-gray-400 font-medium tracking-wide">Email</span>
+                    <span className="text-white font-semibold text-left sm:text-right">tahfizhquranbatuan@gmail.com</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Peta Lokasi */}
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-serif">Lokasi Kami</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kunjungi pondok pesantren kami secara langsung.</p>
+                </div>
+                <a
+                  href="https://maps.app.goo.gl/5VENRQEQD72ZCHQeA"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Dapatkan Rute
+                </a>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="rounded-3xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800 bg-gray-200 h-[380px] relative"
+              >
+                <iframe
+                  src="https://maps.google.com/maps?q=Ma'had%20Tahfizh%20Bahjatul%20Huffazh%20(Kompleks%20Al-Usymuni%20II)&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={true}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Peta Lokasi Pesantren"
+                  className="absolute inset-0"
+                />
+              </motion.div>
+            </div>
+
+          </div>
         </div>
       </section>
     </div>
