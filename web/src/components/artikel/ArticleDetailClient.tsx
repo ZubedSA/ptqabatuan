@@ -18,34 +18,38 @@ export default function ArticleDetailClient({ slug }: { slug: string }) {
 
   useEffect(() => {
     const fetchArticleData = async () => {
-      const { data, error } = await supabase
-        .from("articles")
-        .select("*")
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("articles")
+          .select("*")
+          .eq("slug", slug)
+          .eq("is_published", true)
+          .single();
 
-      if (error || !data) {
-        router.replace("/artikel");
-        return;
+        if (error || !data) {
+          router.replace("/artikel");
+          return;
+        }
+
+        setArticle(data);
+
+        const { data: related } = await supabase
+          .from("articles")
+          .select("*")
+          .eq("category", data.category)
+          .eq("is_published", true)
+          .neq("id", data.id)
+          .order("created_at", { ascending: false })
+          .limit(3);
+
+        if (related) {
+          setRelatedArticles(related);
+        }
+      } catch (err) {
+        console.error("Error fetching article data:", err);
+      } finally {
+        setLoading(false);
       }
-
-      setArticle(data);
-
-      const { data: related } = await supabase
-        .from("articles")
-        .select("*")
-        .eq("category", data.category)
-        .eq("is_published", true)
-        .neq("id", data.id)
-        .order("created_at", { ascending: false })
-        .limit(3);
-
-      if (related) {
-        setRelatedArticles(related);
-      }
-
-      setLoading(false);
     };
 
     if (slug) {

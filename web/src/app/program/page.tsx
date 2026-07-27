@@ -28,13 +28,18 @@ export default function ProgramPage() {
 
   useEffect(() => {
     const fetchPrograms = async () => {
-      const { data } = await supabase
-        .from("educational_programs")
-        .select("*")
-        .order("created_at", { ascending: true });
-      
-      if (data) setPrograms(data);
-      setLoading(false);
+      try {
+        const { data } = await supabase
+          .from("educational_programs")
+          .select("*")
+          .order("created_at", { ascending: true });
+        
+        if (data) setPrograms(data);
+      } catch (err) {
+        console.error("Error fetching programs:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchPrograms();

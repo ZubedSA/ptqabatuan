@@ -32,9 +32,15 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const {
+      data: { user: fetchedUser },
+    } = await supabase.auth.getUser()
+    user = fetchedUser
+  } catch (e) {
+    // Gracefully ignore fetch/network errors when Supabase is offline or paused
+  }
 
   // Protect /admin routes
   if (request.nextUrl.pathname.startsWith('/admin')) {

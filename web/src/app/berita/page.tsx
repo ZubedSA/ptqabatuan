@@ -17,20 +17,25 @@ export default function BeritaPage() {
 
   useEffect(() => {
     const fetchNews = async () => {
-      const { data, error } = await supabase
-        .from("news")
-        .select("*")
-        .eq("is_published", true)
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("news")
+          .select("*")
+          .eq("is_published", true)
+          .order("created_at", { ascending: false });
 
-      if (data) {
-        setNews(data);
+        if (data) {
+          setNews(data);
 
-        // Extract unique categories
-        const uniqueCats = Array.from(new Set(data.map(d => d.category).filter(Boolean))) as string[];
-        setCategories(["Semua", ...uniqueCats]);
+          // Extract unique categories
+          const uniqueCats = Array.from(new Set(data.map(d => d.category).filter(Boolean))) as string[];
+          setCategories(["Semua", ...uniqueCats]);
+        }
+      } catch (err) {
+        console.error("Error fetching news:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchNews();

@@ -18,34 +18,38 @@ export default function NewsDetailClient({ slug }: { slug: string }) {
 
   useEffect(() => {
     const fetchNewsData = async () => {
-      const { data, error } = await supabase
-        .from("news")
-        .select("*")
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("news")
+          .select("*")
+          .eq("slug", slug)
+          .eq("is_published", true)
+          .single();
 
-      if (error || !data) {
-        router.replace("/berita");
-        return;
+        if (error || !data) {
+          router.replace("/berita");
+          return;
+        }
+
+        setNewsItem(data);
+
+        const { data: related } = await supabase
+          .from("news")
+          .select("*")
+          .eq("category", data.category)
+          .eq("is_published", true)
+          .neq("id", data.id)
+          .order("created_at", { ascending: false })
+          .limit(3);
+
+        if (related) {
+          setRelatedNews(related);
+        }
+      } catch (err) {
+        console.error("Error fetching news data:", err);
+      } finally {
+        setLoading(false);
       }
-
-      setNewsItem(data);
-
-      const { data: related } = await supabase
-        .from("news")
-        .select("*")
-        .eq("category", data.category)
-        .eq("is_published", true)
-        .neq("id", data.id)
-        .order("created_at", { ascending: false })
-        .limit(3);
-
-      if (related) {
-        setRelatedNews(related);
-      }
-
-      setLoading(false);
     };
 
     if (slug) {

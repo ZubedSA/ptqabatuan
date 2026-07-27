@@ -16,22 +16,27 @@ export default function GalleryClient({ initialId }: { initialId?: string }) {
 
   useEffect(() => {
     const fetchGallery = async () => {
-      const { data } = await supabase
-        .from("gallery")
-        .select("*")
-        .order("created_at", { ascending: false });
+      try {
+        const { data } = await supabase
+          .from("gallery")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-      if (data) {
-        setGallery(data);
-        const uniqueCats = Array.from(new Set(data.map(d => d.category).filter(Boolean))) as string[];
-        setCategories(["Semua", ...uniqueCats]);
+        if (data) {
+          setGallery(data);
+          const uniqueCats = Array.from(new Set(data.map(d => d.category).filter(Boolean))) as string[];
+          setCategories(["Semua", ...uniqueCats]);
 
-        if (initialId) {
-          const found = data.find(item => String(item.id) === String(initialId));
-          if (found) setSelectedImage(found);
+          if (initialId) {
+            const found = data.find(item => String(item.id) === String(initialId));
+            if (found) setSelectedImage(found);
+          }
         }
+      } catch (err) {
+        console.error("Error fetching gallery:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchGallery();

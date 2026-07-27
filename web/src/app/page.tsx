@@ -21,14 +21,19 @@ export default function Home() {
 
   useEffect(() => {
     const fetchPrograms = async () => {
-      const { data } = await supabase
-        .from("educational_programs")
-        .select("*")
-        .order("created_at", { ascending: true })
-        .limit(3);
+      try {
+        const { data } = await supabase
+          .from("educational_programs")
+          .select("*")
+          .order("created_at", { ascending: true })
+          .limit(3);
 
-      if (data) setPrograms(data);
-      setLoading(false);
+        if (data) setPrograms(data);
+      } catch (err) {
+        console.error("Error fetching programs on home page:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchPrograms();
