@@ -29,6 +29,13 @@ export function getDirectImageUrl(url: string | undefined | null): string {
       return `/api/image-proxy?id=${match2[1]}`;
     }
 
+    // Pola 3: https://drive.google.com/uc?export=view&id=FILE_ID atau uc?id=FILE_ID
+    const driveRegex3 = /drive\.google\.com\/uc\?.*id=([a-zA-Z0-9_-]+)/;
+    const match3 = url.match(driveRegex3);
+    if (match3 && match3[1]) {
+      return `/api/image-proxy?id=${match3[1]}`;
+    }
+
     // Pola 3: https://drive.google.com/drive/folders/... (Tidak bisa dikonversi jadi 1 gambar)
     // Jika ada pola lain, kembalikan aslinya saja.
   } catch (e) {

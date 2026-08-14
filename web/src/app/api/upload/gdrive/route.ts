@@ -50,10 +50,13 @@ export async function POST(request: Request) {
 
     if (!gasResponse.ok) {
       const errorText = await gasResponse.text();
-      return NextResponse.json(
-        { error: `Google Apps Script mengembalikan error status ${gasResponse.status}: ${errorText}` },
-        { status: 500 }
-      );
+      let errorMsg = `Google Apps Script mengembalikan status error ${gasResponse.status}.`;
+      if (gasResponse.status === 404 || errorText.includes('<!DOCTYPE') || errorText.includes('<html')) {
+        errorMsg = `URL Google Apps Script mengembalikan status 404 (Not Found). Hal ini biasanya terjadi karena Deployment ID tidak valid / sudah dihapus, atau pengaturan akses Web App belum disetel ke 'Anyone' (Siapa Saja). Pastikan GOOGLE_APPS_SCRIPT_UPLOAD_URL di .env.local sudah benar.`;
+      } else {
+        errorMsg += ` ${errorText.substring(0, 300)}`;
+      }
+      return NextResponse.json({ error: errorMsg }, { status: 500 });
     }
 
     const result = await gasResponse.json();
@@ -121,10 +124,13 @@ export async function DELETE(request: Request) {
 
     if (!gasResponse.ok) {
       const errorText = await gasResponse.text();
-      return NextResponse.json(
-        { error: `Google Apps Script mengembalikan error status ${gasResponse.status}: ${errorText}` },
-        { status: 500 }
-      );
+      let errorMsg = `Google Apps Script mengembalikan status error ${gasResponse.status}.`;
+      if (gasResponse.status === 404 || errorText.includes('<!DOCTYPE') || errorText.includes('<html')) {
+        errorMsg = `URL Google Apps Script mengembalikan status 404 (Not Found). Hal ini biasanya terjadi karena Deployment ID tidak valid / sudah dihapus, atau pengaturan akses Web App belum disetel ke 'Anyone' (Siapa Saja). Pastikan GOOGLE_APPS_SCRIPT_UPLOAD_URL di .env.local sudah benar.`;
+      } else {
+        errorMsg += ` ${errorText.substring(0, 300)}`;
+      }
+      return NextResponse.json({ error: errorMsg }, { status: 500 });
     }
 
     const result = await gasResponse.json();
