@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS public.donation_campaigns (
   description text,
   target_amount numeric DEFAULT 0,
   current_amount numeric DEFAULT 0,
+  image_url text,
+  images jsonb DEFAULT '[]'::jsonb,
   is_active boolean DEFAULT true,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
